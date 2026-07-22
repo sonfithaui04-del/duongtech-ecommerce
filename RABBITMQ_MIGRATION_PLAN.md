@@ -24,6 +24,6 @@ Chúng ta sẽ chuyển đổi luồng xử lý đơn hàng từ đồng bộ (H
     - Log thông báo gửi email.
 
 ## ⏳ Bước 4: Kiểm thử & Mở rộng
-- [x] Restart toàn bộ hệ thống (`start-all.bat` hoặc `docker-compose up -d --build`).
+- [x] Restart toàn bộ hệ thống (`start-all.bat` hoặc `docker compose -p duong up -d --build`).
 - [x] Đặt hàng và kiểm tra log.
 - [ ] (Future) Xử lý thất bại (Compensating Transaction / Saga) nếu trừ kho lỗi.

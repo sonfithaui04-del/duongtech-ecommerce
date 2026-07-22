@@ -1,4 +1,4 @@
-# 🎊 SESSION COMPLETE - Food Ordering System MVP
+# 🎊 SESSION COMPLETE - DuongTech MVP
 
 **Date:** 26/11/2025  
 **Duration:** 1 session  
@@ -17,12 +17,12 @@
 - PostgreSQL x6 (Databases)
 
 ✅ **Microservices (6/6):**
-1. Service-Auth (8081) - JWT Authentication
-2. Service-Menu (8082) - Menu Management
-3. Service-Order (8083) - Order Processing
-4. Service-Payment (8084) - Payment Handling
-5. Service-Inventory (8085) - Stock Management
-6. Service-Notification (8086) - Notifications
+1. Service-Auth (9081) - JWT Authentication
+2. Service-Menu (9082) - Menu Management
+3. Service-Order (9083) - Order Processing
+4. Service-Payment (9084) - Payment Handling
+5. Service-Inventory (9085) - Stock Management
+6. Service-Notification (9086) - Notifications
 
 **Total:** 15 Docker containers running  
 **Files Created:** ~130 backend files  
@@ -52,13 +52,13 @@
 
 ### Start Backend
 ```bash
-cd food-ordering
-docker-compose up -d
+cd Duong
+docker compose -p duong up -d
 ```
 
 ### Verify Services
-- Eureka: http://localhost:8761
-- API Gateway: http://localhost:8080
+- Eureka: http://localhost:9761
+- API Gateway: http://localhost:9080
 - All 6 services registered ✅
 
 ### Continue Frontend (New Conversation)

@@ -1,4 +1,4 @@
-# REACT FOOD ORDERING APP - Complete Implementation Guide
+# REACT DUONGTECH APP - Complete Implementation Guide
 
 Vì token limit, đây là guide đầy đủ để tạo React app.
 

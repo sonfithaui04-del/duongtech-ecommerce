@@ -9,8 +9,8 @@ start-all.bat
 Script này sẽ:
 1. ✅ Khởi động tất cả Docker services (backend)
 2. ✅ Đợi 30 giây để services sẵn sàng
-3. ✅ Khởi động Customer App (port 3000)
-4. ✅ Khởi động Admin Panel (port 3002)
+3. ✅ Khởi động Customer App (port 3001)
+4. ✅ Khởi động Admin Panel (port 3003)
 
 ### **Cách 2: Khởi động từng phần**
 
@@ -72,24 +72,24 @@ Chọn service cần xem logs:
 ## 🌐 **ENDPOINTS SAU KHI CHẠY**
 
 ### **Backend (Docker):**
-- 🌍 Eureka Server: http://localhost:8761
-- 🚪 API Gateway: http://localhost:8080
-- 🔐 Service Auth: http://localhost:8081
-- 🍔 Service Menu: http://localhost:8082
-- 📦 Service Order: http://localhost:8083
-- 📊 Service Inventory: http://localhost:8085
-- 💳 Service Payment: http://localhost:8084
-- 🔔 Service Notification: http://localhost:8086
+- 🌍 Eureka Server: http://localhost:9761
+- 🚪 API Gateway: http://localhost:9080
+- 🔐 Service Auth: http://localhost:9081
+- 🍔 Service Menu: http://localhost:9082
+- 📦 Service Order: http://localhost:9083
+- 📊 Service Inventory: http://localhost:9085
+- 💳 Service Payment: http://localhost:9084
+- 🔔 Service Notification: http://localhost:9086
 
 ### **Frontend (npm):**
-- 🛒 Customer App: http://localhost:3000
-- 👨‍💼 Admin Panel: http://localhost:3002
+- 🛒 Customer App: http://localhost:3001
+- 👨‍💼 Admin Panel: http://localhost:3003
 
 ### **Swagger UI:**
-- Auth: http://localhost:8081/swagger-ui.html
-- Menu: http://localhost:8082/swagger-ui.html
-- Order: http://localhost:8083/swagger-ui.html
-- Inventory: http://localhost:8085/swagger-ui.html
+- Auth: http://localhost:9081/swagger-ui.html
+- Menu: http://localhost:9082/swagger-ui.html
+- Order: http://localhost:9083/swagger-ui.html
+- Inventory: http://localhost:9085/swagger-ui.html
 
 ---
 
@@ -112,7 +112,7 @@ Chọn service cần xem logs:
 ➡️ Mở Docker Desktop và đợi cho đến khi hiện "Docker is running"
 
 ### **Lỗi: Port đã được sử dụng**
-➡️ Dừng các ứng dụng khác đang dùng port 3000, 3002, 8080-8086
+➡️ Dừng các ứng dụng khác đang dùng port 3001, 3003, 9080-9086
 
 ### **Frontend không start**
 ➡️ Chạy manual:
@@ -137,7 +137,7 @@ npm run dev
 ## 📁 **CẤU TRÚC SCRIPTS**
 
 ```
-food-ordering/
+Duong/
 ├── start-all.bat          # 🚀 Chạy tất cả
 ├── start-backend.bat      # 🐳 Chỉ backend
 ├── start-frontend.bat     # 💻 Chỉ frontend
@@ -154,8 +154,8 @@ food-ordering/
 2. Double-click **`start-all.bat`**
 3. Đợi 1-2 phút
 4. Truy cập:
-   - Customer: http://localhost:3000
-   - Admin: http://localhost:3002
+   - Customer: http://localhost:3001
+   - Admin: http://localhost:3003
 
 **Done!** 🎉
 

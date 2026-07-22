@@ -1,6 +1,6 @@
 # Project Standards & Coding Rules
 
-This document outlines the architectural standards, coding conventions, and best practices established for the Food Ordering Microservices project.
+This document outlines the architectural standards, coding conventions, and best practices established for the DuongTech Microservices project.
 
 ## 1. Technology Stack
 
@@ -52,7 +52,7 @@ Each microservice follows a strict layered architecture:
 
 ### Real-time Updates
 *   **Protocol:** WebSocket (STOMP over SockJS).
-*   **Gateway:** All WebSocket traffic goes through API Gateway port 8080 (`/ws`).
+*   **Gateway:** All WebSocket traffic goes through API Gateway port 9080 (`/ws`).
 *   **Pattern:**
     *   **Singleton Service:** The Socket Service in frontend MUST be a Singleton to prevent duplicate connections/subscriptions (especially in React Strict Mode).
     *   **Topics:**
@@ -80,8 +80,8 @@ Each microservice follows a strict layered architecture:
 
 ## 5. Docker & Deployment
 *   **Service Names:** Must match `spring.application.name` in `application.yml`.
-*   **Networking:** All services communicate within the `food-ordering-network`.
-*   **Gateway:** Exposes port `8080`. Frontend apps connect to `localhost:8080`.
+*   **Networking:** All services communicate within the `duong-network`.
+*   **Gateway:** Exposes host port `9080` (container `8080`). Frontend apps connect to `localhost:9080`.
 
 ## 6. Critical Fixes History (Reference)
 *   **Duplicate Toasts:** Caused by multiple socket connections. Fixed by implementing Singleton pattern in `socketService.js`.

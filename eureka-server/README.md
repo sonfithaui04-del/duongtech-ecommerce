@@ -1,7 +1,7 @@
 # Eureka Server
 
 ## 📋 Mô tả
-Service Discovery Server cho hệ thống Food Ordering. Tất cả các microservices sẽ đăng ký với Eureka Server này để có thể tìm kiếm và giao tiếp với nhau.
+Service Discovery Server cho hệ thống DuongTech. Tất cả các microservices sẽ đăng ký với Eureka Server này để có thể tìm kiếm và giao tiếp với nhau.
 
 ## 🔧 Công nghệ
 - Spring Boot 3.2.1
@@ -18,26 +18,26 @@ mvn spring-boot:run
 ### Production (với Docker)
 ```bash
 docker build -t eureka-server:1.0.0 .
-docker run -p 8761:8761 eureka-server:1.0.0
+docker run -p 9761:8761 eureka-server:1.0.0
 ```
 
 ## 🌐 Endpoints
 
 | Endpoint | Mô tả |
 |----------|-------|
-| http://localhost:8761 | Eureka Dashboard UI |
-| http://localhost:8761/eureka/apps | Registry Information (XML) |
-| http://localhost:8761/actuator/health | Health Check |
+| http://localhost:9761 | Eureka Dashboard UI |
+| http://localhost:9761/eureka/apps | Registry Information (XML) |
+| http://localhost:9761/actuator/health | Health Check |
 
 ## ⚙️ Cấu hình
 
-- **Port**: 8761
+- **Port**: 9761
 - **Self-Preservation**: Disabled (Development)
 - **Eviction Interval**: 3 seconds
 
 ## 📊 Monitoring
 
-Truy cập Eureka Dashboard tại: http://localhost:8761
+Truy cập Eureka Dashboard tại: http://localhost:9761
 
 Ở đây bạn có thể thấy:
 - Danh sách tất cả services đã đăng ký

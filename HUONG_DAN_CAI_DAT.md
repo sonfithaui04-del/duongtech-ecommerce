@@ -1,4 +1,4 @@
-# Hướng dẫn Cài đặt & Triển khai Hệ thống Food Ordering (Cho máy mới)
+# Hướng dẫn Cài đặt & Triển khai Hệ thống DuongTech (Cho máy mới)
 
 Tài liệu này hướng dẫn chi tiết cách cài đặt môi trường và chạy dự án khi chuyển sang một máy tính mới hoàn toàn.
 
@@ -29,30 +29,30 @@ Mở **Command Prompt (CMD)** hoặc **PowerShell** hoặc **Git Bash**:
 ```bash
 # Clone dự án về máy
 git clone <link-repo-cua-ban>
-cd food-ordering
+cd Duong
 ```
 
 ---
 
 ## 🐳 3. Chạy Backend (Microservices)
 
-Chúng ta sẽ dùng Docker Compose để chạy toàn bộ: 6 Databases, RabbitMQ, Eureka, và 7 Microservices.
+Chúng ta sẽ dùng Docker Compose để chạy toàn bộ: 6 Databases, RabbitMQ, Eureka, và 7 Microservices. Toàn bộ chạy dưới project name `duong` để không đụng cổng với shop khác.
 
 ### Bước 3.1: Khởi động hệ thống
-Tại thư mục gốc `food-ordering`, chạy lệnh:
+Tại thư mục gốc `Duong`, chạy lệnh:
 
 ```powershell
-docker-compose up -d --build
+docker compose -p duong up -d --build
 ```
 *Lần đầu chạy sẽ mất khoảng 5-15 phút để tải thư viện và build các services. Hãy kiên nhẫn.*
 
 ### Bước 3.2: Kiểm tra trạng thái
-Mở Docker Desktop hoặc chạy lệnh `docker-compose ps`.
-Đảm bảo các container đều có trạng thái **Running (Up)**.
+Mở Docker Desktop hoặc chạy lệnh `docker compose -p duong ps`.
+Đảm bảo các container (tiền tố `duong-`) đều có trạng thái **Running (Up)**.
 
 Truy cập thử:
-*   **Eureka (Quản lý Service):** [http://localhost:8761](http://localhost:8761)
-*   **API Gateway:** [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+*   **Eureka (Quản lý Service):** [http://localhost:9761](http://localhost:9761)
+*   **API Gateway:** [http://localhost:9080/actuator/health](http://localhost:9080/actuator/health)
 
 ### Bước 3.3: Nạp dữ liệu vào Database (QUAN TRỌNG)
 Khi chạy trên máy mới, Database sẽ trống trơn. Bạn cần nạp dữ liệu từ thư mục `SQL_Backup`.
@@ -60,14 +60,14 @@ Khi chạy trên máy mới, Database sẽ trống trơn. Bạn cần nạp dữ
 Chạy các lệnh sau trong PowerShell (hoặc Terminal):
 
 ```powershell
-# 1. Nạp Service Menu (Danh mục, Món ăn)
-cat "SQL_Backup/menu_service.sql" | docker exec -i postgres-menu psql -U postgres -d food_ordering_menu
+# 1. Nạp Service Menu (Danh mục, Sản phẩm laptop)
+cat "SQL_Backup/menu_service.sql" | docker exec -i duong-postgres-menu psql -U postgres -d food_ordering_menu
 
 # 2. Nạp Service Auth (Tài khoản users)
-cat "SQL_Backup/auth_service.sql" | docker exec -i postgres-auth psql -U postgres -d food_ordering_auth
+cat "SQL_Backup/auth_service.sql" | docker exec -i duong-postgres-auth psql -U postgres -d food_ordering_auth
 
 # 3. Nạp Service Payment (Cấu hình thanh toán)
-cat "SQL_Backup/payment_service.sql" | docker exec -i postgres-payment psql -U postgres -d food_ordering_payment
+cat "SQL_Backup/payment_service.sql" | docker exec -i duong-postgres-payment psql -U postgres -d food_ordering_payment
 
 # Các service khác (Order, Inventory, Notification) thường tự sinh dữ liệu khi chạy, không cần backup.
 ```
@@ -89,12 +89,12 @@ cd frontend
 npm install
 
 # Kiểm tra file cấu hình
-# Đảm bảo file .env tồn tại (nếu chưa có, tạo file .env với nội dung: VITE_API_URL=http://localhost:8080)
+# Đảm bảo file .env tồn tại (nếu chưa có, tạo file .env với nội dung: VITE_API_URL=http://localhost:9080)
 
 # Chạy ứng dụng
 npm run dev
 ```
-👉 Truy cập: **[http://localhost:5173](http://localhost:5173)**
+👉 Truy cập: **[http://localhost:3001](http://localhost:3001)**
 
 ### Bước 4.2: Chạy Web Quản Trị (Admin Panel)
 
@@ -108,7 +108,7 @@ npm install
 # Chạy ứng dụng
 npm run dev
 ```
-👉 Truy cập: **[http://localhost:5174](http://localhost:5174)**
+👉 Truy cập: **[http://localhost:3003](http://localhost:3003)**
 
 ---
 
@@ -120,7 +120,7 @@ Nếu bạn cần demo Kubernetes trên máy mới:
 2.  **Build Docker Images** (K8s không tự build như Compose):
     Mở PowerShell tại thư mục gốc và chạy:
     ```powershell
-    docker-compose build
+    docker compose -p duong build
     ```
 3.  **Deploy lên K8s**:
     ```powershell
@@ -130,22 +130,22 @@ Nếu bạn cần demo Kubernetes trên máy mới:
     kubectl apply -f k8s/deployments.yaml
     kubectl apply -f k8s/ingress.yaml
     ```
-4.  **Kiểm tra**: `kubectl get pods -n food-ordering`
+4.  **Kiểm tra**: `kubectl get pods -n duong`
 
 ---
 
 ## ❓ 6. Xử lý sự cố (Troubleshooting)
 
 1.  **Lỗi "Port already in use"**:
-    *   Tắt các ứng dụng đang chiếm cổng 8080, 5432...
-    *   Hoặc chạy `docker-compose down` rồi thử lại.
+    *   Tắt các ứng dụng đang chiếm cổng 9080, 6438...
+    *   Hoặc chạy `docker compose -p duong down` rồi thử lại.
 
 2.  **Không đăng nhập được**:
     *   Kiểm tra xem đã nạp dữ liệu `auth_service.sql` chưa (Bước 3.3).
     *   Tài khoản mặc định thường là: `admin@gmail.com` / `123456` (hoặc check trong sql).
 
 3.  **Frontend không load được sản phẩm**:
-    *   Kiểm tra API Gateway (localhost:8080) có chạy không.
+    *   Kiểm tra API Gateway (localhost:9080) có chạy không.
     *   Kiểm tra Service Menu có chạy không (check Eureka).
     *   Inspect Element (F12) -> Network xem API trả về lỗi gì.
 

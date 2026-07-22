@@ -1,6 +1,6 @@
 # ✅ Project Setup Summary
 
-## 🎉 Đã hoàn thành setup dự án Food Ordering System!
+## 🎉 Đã hoàn thành setup dự án DuongTech!
 
 **Thời gian setup:** 26/11/2025  
 **Trạng thái:** ✅ Ready for Development
@@ -12,7 +12,7 @@
 ### 1. ✅ Infrastructure Services
 
 #### Eureka Server (Service Discovery)
-- ✅ Port: 8761
+- ✅ Port: 9761
 - ✅ Spring Boot 3.2.1
 - ✅ Eureka Dashboard UI
 - ✅ Health checks
@@ -20,7 +20,7 @@
 - ✅ README.md
 
 #### API Gateway
-- ✅ Port: 8080
+- ✅ Port: 9080
 - ✅ Spring Cloud Gateway
 - ✅ Routes cho tất cả services
 - ✅ CORS configuration
@@ -34,7 +34,7 @@
 ### 2. ✅ Microservices
 
 #### Service-Auth (Authentication Service)
-**Port:** 8081
+**Port:** 9081
 
 **Cấu trúc DDD hoàn chỉnh:**
 
@@ -80,13 +80,13 @@
 
 | Service | Port | Status |
 |---------|------|--------|
-| postgres-auth | 5432 | ✅ Ready |
-| postgres-menu | 5433 | ✅ Ready |
-| postgres-order | 5434 | ✅ Ready |
-| rabbitmq | 5672, 15672 | ✅ Ready |
-| eureka-server | 8761 | ✅ Ready |
-| api-gateway | 8080 | ✅ Ready |
-| service-auth | 8081 | ✅ Ready |
+| postgres-auth | 6438 | ✅ Ready |
+| postgres-menu | 6433 | ✅ Ready |
+| postgres-order | 6434 | ✅ Ready |
+| rabbitmq | 6672, 16672 | ✅ Ready |
+| eureka-server | 9761 | ✅ Ready |
+| api-gateway | 9080 | ✅ Ready |
+| service-auth | 9081 | ✅ Ready |
 
 **Features:**
 - ✅ Health checks cho tất cả services
@@ -159,22 +159,22 @@
 ### Bước 1: Khởi động hệ thống
 
 ```bash
-cd food-ordering
-docker-compose up -d
+cd Duong
+docker compose -p duong up -d
 ```
 
 ### Bước 2: Kiểm tra services
 
-- **Eureka Dashboard:** http://localhost:8761
-- **API Gateway:** http://localhost:8080
-- **Auth Swagger UI:** http://localhost:8081/swagger-ui.html
-- **RabbitMQ Management:** http://localhost:15672 (admin/admin)
+- **Eureka Dashboard:** http://localhost:9761
+- **API Gateway:** http://localhost:9080
+- **Auth Swagger UI:** http://localhost:9081/swagger-ui.html
+- **RabbitMQ Management:** http://localhost:16672 (guest/guest)
 
 ### Bước 3: Test API
 
 **Register:**
 ```bash
-curl -X POST http://localhost:8080/api/auth/register \
+curl -X POST http://localhost:9080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -186,7 +186,7 @@ curl -X POST http://localhost:8080/api/auth/register \
 
 **Login:**
 ```bash
-curl -X POST http://localhost:8080/api/auth/login \
+curl -X POST http://localhost:9080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -224,7 +224,7 @@ curl -X POST http://localhost:8080/api/auth/login \
 ## 📁 Project Structure
 
 ```
-food-ordering/
+Duong/
 ├── eureka-server/              ✅ Service Discovery
 │   ├── src/main/java/...
 │   ├── src/main/resources/
@@ -357,10 +357,10 @@ CREATE TABLE users (
 - Auth: `service-auth/README.md`
 
 ### Monitoring URLs
-- Eureka: http://localhost:8761
-- Gateway Health: http://localhost:8080/actuator/health
-- Auth Swagger: http://localhost:8081/swagger-ui.html
-- RabbitMQ: http://localhost:15672
+- Eureka: http://localhost:9761
+- Gateway Health: http://localhost:9080/actuator/health
+- Auth Swagger: http://localhost:9081/swagger-ui.html
+- RabbitMQ: http://localhost:16672
 
 ---
 

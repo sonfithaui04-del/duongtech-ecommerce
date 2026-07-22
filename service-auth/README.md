@@ -1,7 +1,7 @@
 # Authentication Service
 
 ## 📋 Mô tả
-Service xử lý authentication và authorization cho toàn bộ hệ thống Food Ordering.
+Service xử lý authentication và authorization cho toàn bộ hệ thống DuongTech.
 
 ## 🔧 Công nghệ
 - Spring Boot 3.2.1
@@ -93,7 +93,7 @@ mvn spring-boot:run
 Health check
 
 ## 📊 Swagger UI
-Truy cập: http://localhost:8081/swagger-ui.html
+Truy cập: http://localhost:9081/swagger-ui.html
 
 ## 🔐 JWT Configuration
 
@@ -105,7 +105,7 @@ Truy cập: http://localhost:8081/swagger-ui.html
 
 | Role | Mô tả |
 |------|-------|
-| CUSTOMER | Khách hàng đặt món |
+| CUSTOMER | Khách hàng mua hàng |
 | ADMIN | Quản trị viên |
 | STAFF | Nhân viên (dự phòng) |
 
@@ -119,15 +119,15 @@ Truy cập: http://localhost:8081/swagger-ui.html
 
 ## ⚙️ Configuration
 
-- **Port**: 8081
-- **Database**: PostgreSQL (localhost:5432)
-- **Eureka Server**: http://localhost:8761/eureka/
+- **Port**: 9081
+- **Database**: PostgreSQL (localhost:6438)
+- **Eureka Server**: http://localhost:9761/eureka/
 - **Service Name**: service-auth
 
 ## 🔗 Dependencies
 
-- Eureka Server (localhost:8761)
-- PostgreSQL (localhost:5432)
+- Eureka Server (localhost:9761)
+- PostgreSQL (localhost:6438)
 
 ## 📝 Logging Format
 
@@ -139,7 +139,7 @@ Truy cập: http://localhost:8081/swagger-ui.html
 
 ```bash
 # Test register
-curl -X POST http://localhost:8081/auth/register \
+curl -X POST http://localhost:9081/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -149,7 +149,7 @@ curl -X POST http://localhost:8081/auth/register \
   }'
 
 # Test login
-curl -X POST http://localhost:8081/auth/login \
+curl -X POST http://localhost:9081/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",

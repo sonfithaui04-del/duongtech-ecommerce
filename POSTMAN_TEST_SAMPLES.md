@@ -8,7 +8,7 @@ Dưới đây là bảng chi tiết các Test Case API điển hình được s�
 | :--- | :--- |
 | **Mục đích** | Lấy JWT Token để truy cập các API bảo mật. |
 | **Method** | `POST` |
-| **URL** | `http://localhost:8080/api/auth/login` |
+| **URL** | `http://localhost:9080/api/auth/login` |
 | **Body (JSON)** | ```json<br>{<br>  "username": "nguyenvanan",<br>  "password": "password"<br>}<br>``` |
 | **Expected Result** | **HTTP 200 OK** |
 | **Response** | ```json<br>{<br>  "token": "eyJhbGciOiJIUzI1NiIsIn...",<br>  "type": "Bearer",<br>  "id": 1,<br>  "username": "nguyenvanan",<br>  "roles": ["ROLE_USER"]<br>}<br>``` |
@@ -21,9 +21,9 @@ Dưới đây là bảng chi tiết các Test Case API điển hình được s�
 
 | Test Case | API Create Order (Tạo đơn) |
 | :--- | :--- |
-| **Mục đích** | Tạo một đơn hàng mới với danh sách món ăn. |
+| **Mục đích** | Tạo một đơn hàng mới với danh sách sản phẩm. |
 | **Method** | `POST` |
-| **URL** | `http://localhost:8080/api/orders` |
+| **URL** | `http://localhost:9080/api/orders` |
 | **Headers** | `Authorization: Bearer <jwt_token>` |
 | **Body (JSON)** | ```json<br>{<br>  "items": [<br>    { "productId": 1, "quantity": 2 }<br>  ],<br>  "paymentMethod": "COD",<br>  "address": "123 Main St, Hanoi"<br>}<br>``` |
 | **Expected Result** | **HTTP 200 OK** |
@@ -35,7 +35,7 @@ Dưới đây là bảng chi tiết các Test Case API điển hình được s�
 | :--- | :--- |
 | **Mục đích** | Người dùng hoặc Admin hủy đơn hàng khi trạng thái là PENDING. |
 | **Method** | `PATCH` |
-| **URL** | `http://localhost:8080/api/orders/{orderId}/status` |
+| **URL** | `http://localhost:9080/api/orders/{orderId}/status` |
 | **Headers** | `Authorization: Bearer <jwt_token>` |
 | **Body (JSON)** | ```json<br>{<br>  "status": "CANCELLED"<br>}<br>``` |
 | **Expected Result** | **HTTP 200 OK** |
@@ -45,12 +45,12 @@ Dưới đây là bảng chi tiết các Test Case API điển hình được s�
 
 ## 3. Menu Service
 
-| Test Case | API Get Menu (Xem thực đơn) |
+| Test Case | API Get Menu (Xem danh mục sản phẩm) |
 | :--- | :--- |
-| **Mục đích** | Lấy danh sách món ăn hiển thị cho khách hàng (Public API). |
+| **Mục đích** | Lấy danh sách sản phẩm hiển thị cho khách hàng (Public API). |
 | **Method** | `GET` |
-| **URL** | `http://localhost:8080/api/menu` |
+| **URL** | `http://localhost:9080/api/menu` |
 | **Headers** | _None_ |
 | **Body** | _None_ |
 | **Expected Result** | **HTTP 200 OK** |
-| **Response** | ```json<br>[<br>  { "id": 1, "name": "Phở Bò", "price": 50000 },<br>  { "id": 2, "name": "Bún Chả", "price": 60000 }<br>]<br>``` |
+| **Response** | ```json<br>[<br>  { "id": 1, "name": "Asus ROG Strix", "price": 32000000 },<br>  { "id": 2, "name": "Dell XPS 13", "price": 28000000 }<br>]<br>``` |

@@ -1,5 +1,5 @@
 # 🏗️ Project Architecture & Development Rules  
-> Food Ordering System — Microservices + DDD + API Gateway + RabbitMQ
+> DuongTech — Microservices + DDD + API Gateway + RabbitMQ
 
 ---
 

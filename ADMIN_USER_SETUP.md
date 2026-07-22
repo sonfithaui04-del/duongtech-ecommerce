@@ -24,7 +24,7 @@
 
 ```bash
 # Kết nối vào PostgreSQL container của service-auth
-docker exec -it postgres-auth psql -U postgres -d authdb
+docker exec -it duong-postgres-auth psql -U postgres -d food_ordering_auth
 
 # Kiểm tra user vừa tạo
 SELECT id, full_name, email, role FROM users;
@@ -43,10 +43,10 @@ SELECT id, full_name, email, role FROM users;
 
 **Connection Details:**
 - Host: `localhost`
-- Port: `5432`
-- Database: `authdb`
+- Port: `6438`
+- Database: `food_ordering_auth`
 - Username: `postgres`
-- Password: `postgres`
+- Password: `10112004`
 
 **SQL Command:**
 ```sql
@@ -55,7 +55,7 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'admin@foodorder.com';
 
 ### Bước 3: Login vào Admin Panel
 
-1. Mở http://localhost:3002
+1. Mở http://localhost:3003
 2. Login với:
    - Email: `admin@foodorder.com`
    - Password: `admin123`
@@ -98,7 +98,7 @@ public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequest request) {
 Sau đó dùng curl hoặc Postman:
 
 ```bash
-curl -X POST http://localhost:8080/api/auth/register-admin \
+curl -X POST http://localhost:9080/api/auth/register-admin \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@foodorder.com",
@@ -158,7 +158,7 @@ Sau đó rebuild và restart service-auth:
 ```bash
 cd service-auth
 mvn clean package -DskipTests
-docker-compose up -d --build service-auth
+docker compose -p duong up -d --build service-auth
 ```
 
 ---
@@ -179,13 +179,13 @@ Trước khi login, đảm bảo services đang chạy:
 
 ```bash
 # Kiểm tra containers
-docker-compose ps
+docker compose -p duong ps
 
 # Kiểm tra service-auth logs
-docker logs service-auth
+docker logs duong-service-auth
 
 # Test API Gateway
-curl http://localhost:8080/api/auth/login -X POST \
+curl http://localhost:9080/api/auth/login -X POST \
   -H "Content-Type: application/json" \
   -d '{"email":"test@test.com","password":"123456"}'
 ```
@@ -195,7 +195,7 @@ curl http://localhost:8080/api/auth/login -X POST \
 ## ✅ Sau Khi Fix
 
 **Test Admin Login:**
-1. Mở http://localhost:3002
+1. Mở http://localhost:3003
 2. Login:
    ```
    Email: admin@foodorder.com
@@ -224,6 +224,6 @@ curl http://localhost:8080/api/auth/login -X POST \
 
 1. **Tạo user** qua http://localhost:3001/register
 2. **Update role** qua SQL: `UPDATE users SET role = 'ADMIN' WHERE email = 'admin@foodorder.com';`
-3. **Login admin** tại http://localhost:3002
+3. **Login admin** tại http://localhost:3003
 
 **Lỗi 403 = Chưa có ADMIN role!** ⚠️

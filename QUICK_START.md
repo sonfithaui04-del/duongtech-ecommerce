@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide - Food Ordering System
+# 🚀 Quick Start Guide - DuongTech
 
 ## 📋 Yêu cầu hệ thống
 
@@ -21,7 +21,7 @@
 
 ```bash
 git clone <repository-url>
-cd food-ordering
+cd Duong
 ```
 
 ### Bước 2: Kiểm tra cấu trúc
@@ -32,7 +32,7 @@ ls -la
 
 Bạn sẽ thấy:
 ```
-food-ordering/
+Duong/
 ├── eureka-server/          ✅ Service Discovery
 ├── api-gateway/            ✅ API Gateway
 ├── service-auth/           ✅ Authentication Service
@@ -66,15 +66,15 @@ cd ..
 
 **Option B: Để Docker build (khuyến nghị)**
 
-Skip bước này, Docker sẽ tự build khi chạy `docker-compose up`.
+Skip bước này, Docker sẽ tự build khi chạy `docker compose -p duong up`.
 
 ---
 
 ### Bước 4: Chạy hệ thống với Docker
 
 ```bash
-# Từ thư mục gốc food-ordering
-docker-compose up -d
+# Từ thư mục gốc duong
+docker compose -p duong up -d
 ```
 
 **Giải thích:**
@@ -94,32 +94,32 @@ docker-compose up -d
 
 ```bash
 # Xem logs tất cả services
-docker-compose logs -f
+docker compose -p duong logs -f
 
 # Xem logs của service cụ thể
-docker-compose logs -f eureka-server
-docker-compose logs -f api-gateway
-docker-compose logs -f service-auth
+docker compose -p duong logs -f eureka-server
+docker compose -p duong logs -f api-gateway
+docker compose -p duong logs -f service-auth
 ```
 
 #### 5.2. Kiểm tra health
 
 ```bash
 # Eureka Server
-curl http://localhost:8761/actuator/health
+curl http://localhost:9761/actuator/health
 
 # API Gateway
-curl http://localhost:8080/actuator/health
+curl http://localhost:9080/actuator/health
 
 # Auth Service
-curl http://localhost:8081/actuator/health
+curl http://localhost:9081/actuator/health
 ```
 
 Tất cả phải trả về: `{"status":"UP"}`
 
 #### 5.3. Truy cập Eureka Dashboard
 
-Mở browser: **http://localhost:8761**
+Mở browser: **http://localhost:9761**
 
 Bạn sẽ thấy các services đã đăng ký:
 - API-GATEWAY
@@ -132,7 +132,7 @@ Bạn sẽ thấy các services đã đăng ký:
 ### 1. Test Register (Đăng ký user mới)
 
 ```bash
-curl -X POST http://localhost:8080/api/auth/register \
+curl -X POST http://localhost:9080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com",
@@ -157,7 +157,7 @@ curl -X POST http://localhost:8080/api/auth/register \
 ### 2. Test Login
 
 ```bash
-curl -X POST http://localhost:8080/api/auth/login \
+curl -X POST http://localhost:9080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com",
@@ -169,7 +169,7 @@ curl -X POST http://localhost:8080/api/auth/login \
 
 ### 3. Test với Swagger UI
 
-Mở browser: **http://localhost:8081/swagger-ui.html**
+Mở browser: **http://localhost:9081/swagger-ui.html**
 
 Tại đây bạn có thể:
 - Xem tất cả endpoints
@@ -182,7 +182,7 @@ Tại đây bạn có thể:
 
 ### RabbitMQ Management UI
 
-**URL:** http://localhost:15672  
+**URL:** http://localhost:16672  
 **Username:** admin  
 **Password:** admin
 
@@ -196,9 +196,9 @@ Tại đây bạn có thể:
 **Connection Info:**
 ```
 Host: localhost
-Port: 5432 (auth), 5433 (menu), 5434 (order)
+Port: 6438 (auth), 6433 (menu), 6434 (order)
 Username: postgres
-Password: postgres
+Password: 10112004
 Database: food_ordering_auth
 ```
 
@@ -211,8 +211,8 @@ Kết nối bằng pgAdmin hoặc DBeaver để xem dữ liệu.
 ### Chạy một service riêng lẻ (không dùng Docker)
 
 **Prerequisites:**
-- PostgreSQL đang chạy ở localhost:5432
-- Eureka Server đang chạy ở localhost:8761
+- PostgreSQL đang chạy ở localhost:6438
+- Eureka Server đang chạy ở localhost:9761
 
 ```bash
 cd service-auth
@@ -223,20 +223,20 @@ mvn spring-boot:run
 
 ```bash
 # Rebuild và restart service-auth
-docker-compose up -d --build service-auth
+docker compose -p duong up -d --build service-auth
 
 # Xem logs
-docker-compose logs -f service-auth
+docker compose -p duong logs -f service-auth
 ```
 
 ### Stop và xóa tất cả
 
 ```bash
 # Stop tất cả services
-docker-compose down
+docker compose -p duong down
 
 # Stop và xóa volumes (reset databases)
-docker-compose down -v
+docker compose -p duong down -v
 ```
 
 ---
@@ -245,13 +245,13 @@ docker-compose down -v
 
 ### Problem 1: Port already in use
 
-**Error:** `Bind for 0.0.0.0:8080 failed: port is already allocated`
+**Error:** `Bind for 0.0.0.0:9080 failed: port is already allocated`
 
 **Solution:**
 ```bash
 # Tìm process đang dùng port
-netstat -ano | findstr :8080  # Windows
-lsof -i :8080                  # Linux/Mac
+netstat -ano | findstr :9080  # Windows
+lsof -i :9080                  # Linux/Mac
 
 # Kill process
 taskkill /PID <PID> /F         # Windows
@@ -261,16 +261,16 @@ kill -9 <PID>                  # Linux/Mac
 ### Problem 2: Service không đăng ký với Eureka
 
 **Solution:**
-1. Kiểm tra Eureka Server đã chạy chưa: http://localhost:8761
-2. Xem logs của service: `docker-compose logs -f service-auth`
-3. Restart service: `docker-compose restart service-auth`
+1. Kiểm tra Eureka Server đã chạy chưa: http://localhost:9761
+2. Xem logs của service: `docker compose -p duong logs -f service-auth`
+3. Restart service: `docker compose -p duong restart service-auth`
 
 ### Problem 3: Database connection error
 
 **Solution:**
-1. Kiểm tra PostgreSQL container: `docker-compose ps`
-2. Kiểm tra logs: `docker-compose logs -f postgres-auth`
-3. Restart database: `docker-compose restart postgres-auth`
+1. Kiểm tra PostgreSQL container: `docker compose -p duong ps`
+2. Kiểm tra logs: `docker compose -p duong logs -f postgres-auth`
+3. Restart database: `docker compose -p duong restart postgres-auth`
 
 ### Problem 4: Build failed
 
@@ -308,8 +308,8 @@ Sau khi hệ thống chạy thành công:
 ## 📞 Support
 
 Nếu gặp vấn đề:
-1. Check logs: `docker-compose logs -f`
-2. Check health: `curl http://localhost:8081/actuator/health`
+1. Check logs: `docker compose -p duong logs -f`
+2. Check health: `curl http://localhost:9081/actuator/health`
 3. Tham khảo README.md của từng service
 4. Contact team
 

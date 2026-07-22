@@ -4,35 +4,35 @@
 
 ### Infrastructure (100%)
 - ✅ Docker Compose
-- ✅ Eureka Server (8761)
-- ✅ API Gateway (8080)
-- ✅ RabbitMQ (5672, 15672)
-- ✅ PostgreSQL x4 (5432, 5433, 5434, 5435)
+- ✅ Eureka Server (9761)
+- ✅ API Gateway (9080)
+- ✅ RabbitMQ (6672, 16672)
+- ✅ PostgreSQL x6 (6433-6438)
 
 ### Microservices (4/6 = 67%)
 
-#### ✅ Service-Auth (Port 8081)  
+#### ✅ Service-Auth (Port 9081)  
 **Status:** COMPLETE & TESTED
 - Domain: User, UserRole, UserStatus
 - Features: Register, Login, JWT
 - **API:** POST /auth/register, POST /auth/login
-- Swagger: http://localhost:8081/swagger-ui.html
+- Swagger: http://localhost:9081/swagger-ui.html
 
-#### ✅ Service-Menu (Port 8082)
+#### ✅ Service-Menu (Port 9082)
 **Status:** COMPLETE & TESTED  
 - Domain: MenuItem, Category
 - Features: CRUD Menu & Categories
 - **API:** GET/POST /menu, GET/POST /categories
-- Swagger: http://localhost:8082/swagger-ui.html
+- Swagger: http://localhost:9082/swagger-ui.html
 
-#### ✅ Service-Order (Port 8083)
+#### ✅ Service-Order (Port 9083)
 **Status:** COMPLETE & TESTED
 - Domain: Order, OrderItem, OrderStatus
 - Features: Create Order, Get User Orders
 - **API:** POST /orders, GET /orders/user/:id
-- Swagger: http://localhost:8083/swagger-ui.html
+- Swagger: http://localhost:9083/swagger-ui.html
 
-#### ✅ Service-Payment (Port 8084)
+#### ✅ Service-Payment (Port 9084)
 **Status:** COMPLETE (NOT YET DEPLOYED)
 - Domain: Payment, PaymentStatus
 - Features: Process Payment (auto-approve for MVP)
@@ -40,13 +40,13 @@
 - Files created: 7/7 ✅
 - **Next:** Add to docker-compose & test
 
-#### ⏳ Service-Inventory (Port 8085)
+#### ⏳ Service-Inventory (Port 9085)
 **Status:** NOT STARTED
 - Domain: InventoryItem
 - Features: Check stock, Reserve items
 - **API:** GET /inventory/check/:id
 
-#### ⏳ Service-Notification (Port 8086)
+#### ⏳ Service-Notification (Port 9086)
 **Status:** NOT STARTED  
 - Domain: Notification
 - Features: Send notifications (mocked - log only)
@@ -77,18 +77,18 @@
 ### 3. Update docker-compose.yml
 Add 3 new databases and 3 new services:
 ```yaml
-postgres-payment (5435)
-postgres-inventory (5436)
-postgres-notification (5437)
-service-payment (8084)
-service-inventory (8085)
-service-notification (8086)
+postgres-payment (6435)
+postgres-inventory (6436)
+postgres-notification (6437)
+service-payment (9084)
+service-inventory (9085)
+service-notification (9086)
 ```
 
 ### 4. Build & Test
 ```bash
-docker-compose build service-payment service-inventory service-notification
-docker-compose up -d
+docker compose -p duong build service-payment service-inventory service-notification
+docker compose -p duong up -d
 ```
 
 ### 5. Final Testing
@@ -145,7 +145,7 @@ Given token constraints (~90k remaining), recommend:
 2. **Create Service-Notification** (10 files minimum)
 3. **Update docker-compose.yml** (add 6 new entries)
 4. **Build all 3 new services**
-5. **docker-compose up -d**
+5. **docker compose -p duong up -d**
 6. **Test & verify**
 
 ---

@@ -1,7 +1,7 @@
 # Menu Service
 
 ## 📋 Mô tả
-Service quản lý menu items và categories cho hệ thống Food Ordering.
+Service quản lý menu items và categories cho hệ thống DuongTech.
 
 ## 🔧 Công nghệ
 - Spring Boot 3.2.1
@@ -64,44 +64,44 @@ mvn spring-boot:run
 | POST | `/menu` | Tạo menu item mới |
 
 ## 📊 Swagger UI
-http://localhost:8082/swagger-ui.html
+http://localhost:9082/swagger-ui.html
 
 ## 📝 Example Requests
 
 ### Create Category
 ```bash
-curl -X POST http://localhost:8082/categories \
+curl -X POST http://localhost:9082/categories \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Món chính",
-    "description": "Các món ăn chính",
+    "name": "Laptop Gaming",
+    "description": "Laptop chơi game hiệu năng cao",
     "displayOrder": 1
   }'
 ```
 
 ### Create Menu Item
 ```bash
-curl -X POST http://localhost:8082/menu \
+curl -X POST http://localhost:9082/menu \
   -H "Content-Type: application/json" \
   -d '{
     "categoryId": 1,
-    "name": "Phở bò",
-    "description": "Phở bò truyền thống Hà Nội",
-    "price": 50000,
-    "imageUrl": "https://example.com/pho.jpg"
+    "name": "Asus ROG Strix G16",
+    "description": "Laptop gaming RTX 4060, 16GB RAM, màn 165Hz",
+    "price": 32000000,
+    "imageUrl": "https://example.com/rog-strix.jpg"
   }'
 ```
 
 ### Get All Menu Items
 ```bash
-curl http://localhost:8082/menu
+curl http://localhost:9082/menu
 ```
 
 ## ⚙️ Configuration
 
-- **Port**: 8082
-- **Database**: PostgreSQL (localhost:5433)
-- **Eureka Server**: http://localhost:8761/eureka/
+- **Port**: 9082
+- **Database**: PostgreSQL (localhost:6433)
+- **Eureka Server**: http://localhost:9761/eureka/
 - **Service Name**: service-menu
 
 ## 📌 Database Schema
@@ -128,5 +128,5 @@ curl http://localhost:8082/menu
 - updated_at
 
 ## 🔗 Dependencies
-- Eureka Server (localhost:8761)
-- PostgreSQL (localhost:5433)
+- Eureka Server (localhost:9761)
+- PostgreSQL (localhost:6433)

@@ -1,6 +1,6 @@
 # HƯỚNG DẪN DI CHUYỂN DỰ ÁN SANG MÁY MỚI (MIGRATION GUIDE)
 
-Tài liệu này hướng dẫn cách cập nhật dự án trên một máy tính khác đang chạy phiên bản cũ của "Food Ordering System".
+Tài liệu này hướng dẫn cách cập nhật dự án trên một máy tính khác đang chạy phiên bản cũ của "DuongTech".
 
 ## Yêu cầu trên máy mới
 - **Java 17+**
@@ -16,14 +16,14 @@ Trước khi cập nhật code, hãy xóa deployment cũ để tránh xung độ
 1. Mở **PowerShell** (hoặc Terminal) tại thư mục dự án.
 2. Xóa Kubernetes Namespace cũ:
    ```powershell
-   kubectl delete namespace food-ordering
+   kubectl delete namespace duong
    ```
    *(Lệnh này có thể mất vài phút để hoàn tất)*
 
 3. Xóa Docker Images cũ (tùy chọn nhưng khuyến khích):
    ```powershell
-   # Xóa các image bắt đầu bằng food-ordering-
-   docker images | Where-Object { $_ -match 'food-ordering' } | ForEach-Object { docker rmi $_.split(" ", [StringSplitOptions]::RemoveEmptyEntries)[2] -f }
+   # Xóa các image bắt đầu bằng duong-
+   docker images | Where-Object { $_ -match 'duong' } | ForEach-Object { docker rmi $_.split(" ", [StringSplitOptions]::RemoveEmptyEntries)[2] -f }
    ```
 
 ---
@@ -48,7 +48,7 @@ mvn clean package -DskipTests
 ### 2. Build Docker Images
 Tạo lại các image mới từ file .jar vừa build.
 ```powershell
-docker-compose build
+docker compose -p duong build
 ```
 
 ### 3. Deploy lên Kubernetes
@@ -96,9 +96,9 @@ npm run dev
 
 **Mở Terminal mới và giữ cho lệnh này luôn chạy:**
 ```powershell
-kubectl port-forward -n food-ordering svc/api-gateway 8080:8080
+kubectl port-forward -n duong svc/api-gateway 9080:8080
 ```
-*(Bây giờ backend sẽ active tại `http://localhost:8080`)*
+*(Bây giờ backend sẽ active tại `http://localhost:9080`)*
 
 ---
 
@@ -109,7 +109,7 @@ kubectl port-forward -n food-ordering svc/api-gateway 8080:8080
 
 **2. Lỗi WebSocket (500 Error):**
 - Đảm bảo `service-socket` đã running.
-- Restart Gateway: `kubectl rollout restart deployment/api-gateway -n food-ordering`
+- Restart Gateway: `kubectl rollout restart deployment/api-gateway -n duong`
 
 **3. Database trống trơn:**
 - Đây là bình thường vì Kubernetes trên Docker Desktop thường không giữ data khi xóa namespace trừ khi cấu hình HostPath đặc biệt. Bạn sẽ cần tạo lại dữ liệu test (Tài khoản, Menu, v.v.).

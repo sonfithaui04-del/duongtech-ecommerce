@@ -1,5 +1,5 @@
 # 📋 BÁO CÁO ĐỒ ÁN MÔN HỌC
-## Hệ Thống Đặt Món Ăn Trực Tuyến - Food Ordering System
+## DuongTech - Website Bán Laptop
 
 **Số trang dự kiến:** 40-50 trang  
 **Hình thức:** Theo đồ án tốt nghiệp
@@ -19,7 +19,7 @@
 ---
 
 **Đề tài:**  
-# XÂY DỰNG HỆ THỐNG ĐẶT MÓN ĂN TRỰC TUYẾN VỚI KIẾN TRÚC MICROSERVICES
+# XÂY DỰNG WEBSITE BÁN LAPTOP VỚI KIẾN TRÚC MICROSERVICES
 
 ---
 
@@ -74,7 +74,7 @@
 | 8.1 | Docker Compose Deployment | 40 |
 | 8.2 | Kubernetes Dashboard | 43 |
 | 9.1 | Giao diện đăng nhập | 45 |
-| 9.2 | Giao diện danh sách món ăn | 46 |
+| 9.2 | Giao diện danh sách sản phẩm (laptop) | 46 |
 | 9.3 | Eureka Dashboard | 47 |
 
 ---
@@ -271,10 +271,10 @@ DDD ra đời để giải quyết vấn đề phần mềm ngày càng phức t
 
 **Ubiquitous Language** là ngôn ngữ chung được sử dụng bởi cả developers và domain experts. Ngôn ngữ này được phản ánh trong code, models, và giao tiếp.
 
-**Ví dụ trong hệ thống Food Ordering:**
+**Ví dụ trong hệ thống DuongTech:**
 - `Order` - Đơn hàng
-- `MenuItem` - Món ăn trong menu
-- `Ingredient` - Nguyên liệu
+- `MenuItem` - Sản phẩm (laptop)
+- `InventoryItem` - Tồn kho
 - `Confirmed`, `Preparing`, `Delivered` - Trạng thái đơn hàng
 
 ### 2.2.2 Bounded Context
@@ -283,13 +283,13 @@ DDD ra đời để giải quyết vấn đề phần mềm ngày càng phức t
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    FOOD ORDERING SYSTEM                      │
+│                      DUONGTECH SYSTEM                        │
 ├────────────┬────────────┬────────────┬────────────┬─────────┤
 │   Auth     │   Menu     │   Order    │  Payment   │Inventory│
 │  Context   │  Context   │  Context   │  Context   │ Context │
 ├────────────┼────────────┼────────────┼────────────┼─────────┤
-│ • User     │ • MenuItem │ • Order    │ • Payment  │• Ingredi│
-│ • Role     │ • Category │ • OrderItem│ • Transact │• Recipe │
+│ • User     │ • MenuItem │ • Order    │ • Payment  │• Stock  │
+│ • Role     │ • Category │ • OrderItem│ • Transact │• Import │
 │ • Login    │ • Variant  │ • Status   │ • Method   │• Stock  │
 └────────────┴────────────┴────────────┴────────────┴─────────┘
 ```
@@ -402,7 +402,7 @@ Tập trung vào việc thiết kế chi tiết bên trong mỗi bounded context
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Trong dự án Food Ordering:**
+**Trong dự án DuongTech:**
 ```
 service-order/
 ├── interfaces/
@@ -657,7 +657,7 @@ services:
   eureka-server:
     build: ./eureka-server
     ports:
-      - "8761:8761"
+      - "9761:8761"
   
   service-auth:
     build: ./service-auth
@@ -771,14 +771,14 @@ Các services giao tiếp thông qua events thay vì direct calls:
 
 ### 5.1.1 Bối cảnh
 
-Trong thời đại số hóa, các nhà hàng/quán ăn cần một hệ thống đặt món ăn trực tuyến để:
+Trong thời đại số hóa, các cửa hàng bán lẻ cần một website bán laptop trực tuyến để:
 - Tiếp cận nhiều khách hàng hơn
 - Tối ưu quy trình đặt hàng và vận hành
 - Quản lý menu, đơn hàng, thanh toán hiệu quả
 
 ### 5.1.2 Mục tiêu
 
-Xây dựng **Hệ thống đặt món ăn trực tuyến** với kiến trúc Microservices, áp dụng:
+Xây dựng **Website bán laptop trực tuyến (DuongTech)** với kiến trúc Microservices, áp dụng:
 - Domain-Driven Design (DDD)
 - API Gateway Pattern
 - Container deployment (Docker, Kubernetes)
@@ -791,10 +791,10 @@ Xây dựng **Hệ thống đặt món ăn trực tuyến** với kiến trúc M
 | STT | Module | Chức năng |
 |-----|--------|-----------|
 | 1 | **Auth** | Đăng ký, đăng nhập, JWT authentication |
-| 2 | **Menu** | CRUD danh mục, món ăn, variants |
+| 2 | **Menu** | CRUD danh mục, sản phẩm (laptop), biến thể |
 | 3 | **Order** | Tạo đơn, cập nhật trạng thái, xem lịch sử |
 | 4 | **Payment** | Xử lý thanh toán, ghi nhận transaction |
-| 5 | **Inventory** | Quản lý nguyên liệu, công thức, trừ kho |
+| 5 | **Inventory** | Quản lý tồn kho, nhập/xuất kho |
 | 6 | **Notification** | Gửi thông báo qua email/SMS |
 
 ---
@@ -813,8 +813,8 @@ Xây dựng **Hệ thống đặt món ăn trực tuyến** với kiến trúc M
 
 | Tác nhân | Vai trò |
 |----------|---------|
-| **Customer** | Xem menu, đặt hàng, thanh toán |
-| **Admin** | Quản lý menu, đơn hàng, users |
+| **Customer** | Xem sản phẩm, đặt hàng, thanh toán |
+| **Admin** | Quản lý sản phẩm, đơn hàng, users |
 | **Staff** | Xử lý đơn hàng, cập nhật trạng thái |
 
 ---
@@ -828,10 +828,10 @@ Hệ thống được chia thành **6 Bounded Contexts**, mỗi context tương 
 | Context | Service | Trách nhiệm |
 |---------|---------|-------------|
 | Auth | service-auth | Quản lý users, authentication |
-| Menu | service-menu | Quản lý menu, categories |
+| Menu | service-menu | Quản lý sản phẩm, danh mục |
 | Order | service-order | Quản lý đơn hàng |
 | Payment | service-payment | Xử lý thanh toán |
-| Inventory | service-inventory | Quản lý kho, nguyên liệu |
+| Inventory | service-inventory | Quản lý tồn kho |
 | Notification | service-notification | Gửi thông báo |
 
 ## 6.2 Context Mapping
@@ -986,7 +986,7 @@ service-order/src/main/java/com/foodordering/order/
         └─────────────┼─────────────┘
                       │
                ┌──────▼──────┐
-               │ API Gateway │ Port: 8080
+               │ API Gateway │ Port: 9080
                │ (Routing,   │
                │  CORS, Auth)│
                └──────┬──────┘
@@ -997,7 +997,7 @@ service-order/src/main/java/com/foodordering/order/
    ┌──────────┐ ┌──────────┐ ┌──────────┐
    │  Eureka  │ │ RabbitMQ │ │PostgreSQL│
    │  Server  │ │  Broker  │ │ (x6 DBs) │
-   │  :8761   │ │  :5672   │ │:5432-5437│
+   │  :9761   │ │  :6672   │ │:6433-6438│
    └──────────┘ └──────────┘ └──────────┘
          ▲            ▲            ▲
          │            │            │
@@ -1005,11 +1005,11 @@ service-order/src/main/java/com/foodordering/order/
    │          MICROSERVICES               │
    │  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────────┐│
    │  │Auth │ │Menu │ │Order│ │ Payment ││
-   │  │:8081│ │:8082│ │:8083│ │  :8084  ││
+   │  │:9081│ │:9082│ │:9083│ │  :9084  ││
    │  └─────┘ └─────┘ └─────┘ └─────────┘│
    │  ┌───────────┐ ┌─────────────────┐  │
    │  │ Inventory │ │  Notification   │  │
-   │  │   :8085   │ │     :8086       │  │
+   │  │   :9085   │ │     :9086       │  │
    │  └───────────┘ └─────────────────┘  │
    └─────────────────────────────────────┘
 ```
@@ -1018,14 +1018,14 @@ service-order/src/main/java/com/foodordering/order/
 
 | Service | Port | Database | Chức năng |
 |---------|------|----------|-----------|
-| eureka-server | 8761 | - | Service Discovery |
-| api-gateway | 8080 | - | Routing, CORS |
-| service-auth | 8081 | postgres-auth:5432 | Authentication |
-| service-menu | 8082 | postgres-menu:5433 | Menu management |
-| service-order | 8083 | postgres-order:5434 | Order management |
-| service-payment | 8084 | postgres-payment:5435 | Payment processing |
-| service-inventory | 8085 | postgres-inventory:5436 | Stock management |
-| service-notification | 8086 | postgres-notification:5437 | Notifications |
+| eureka-server | 9761 | - | Service Discovery |
+| api-gateway | 9080 | - | Routing, CORS |
+| service-auth | 9081 | postgres-auth:5432 | Authentication |
+| service-menu | 9082 | postgres-menu:5433 | Menu management |
+| service-order | 9083 | postgres-order:5434 | Order management |
+| service-payment | 9084 | postgres-payment:5435 | Payment processing |
+| service-inventory | 9085 | postgres-inventory:5436 | Stock management |
+| service-notification | 9086 | postgres-notification:5437 | Notifications |
 
 ## 7.3 API Gateway Configuration
 
@@ -1113,7 +1113,7 @@ Order Service → order.created event → Exchange → Queue → Payment Service
 ## 8.2 Cấu trúc thư mục dự án
 
 ```
-food-ordering/
+Duong/
 ├── eureka-server/          # Service Discovery
 ├── api-gateway/            # API Gateway
 ├── service-auth/           # Auth Microservice
@@ -1145,14 +1145,14 @@ services:
   eureka-server:
     build: ./eureka-server
     ports:
-      - "8761:8761"
+      - "9761:8761"
     networks:
-      - food-ordering-network
+      - duong-network
 
   api-gateway:
     build: ./api-gateway
     ports:
-      - "8080:8080"
+      - "9080:8080"
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
@@ -1161,7 +1161,7 @@ services:
   service-auth:
     build: ./service-auth
     ports:
-      - "8081:8081"
+      - "9081:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/food_ordering_auth
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
@@ -1179,7 +1179,7 @@ services:
       - postgres-auth-data:/var/lib/postgresql/data
 
 networks:
-  food-ordering-network:
+  duong-network:
     driver: bridge
 
 volumes:
@@ -1194,7 +1194,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: service-auth
-  namespace: food-ordering
+  namespace: duong
 spec:
   replicas: 2
   selector:
@@ -1207,7 +1207,7 @@ spec:
     spec:
       containers:
         - name: service-auth
-          image: food-ordering-service-auth:latest
+          image: duong-service-auth:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8081
@@ -1226,7 +1226,7 @@ spec:
 ## 8.5 CI/CD Pipeline
 
 ```yaml
-name: Food Ordering CI/CD
+name: DuongTech CI/CD
 
 on:
   push:
@@ -1250,10 +1250,10 @@ jobs:
           cd ../service-order && mvn clean package -DskipTests
           
       - name: Build Docker Images
-        run: docker-compose build
+        run: docker compose -p duong build
         
       - name: Push to Registry
-        run: docker-compose push
+        run: docker compose -p duong push
 ```
 
 ---
@@ -1269,7 +1269,7 @@ jobs:
 
 ## 10.1 Kết luận
 
-Đồ án đã hoàn thành việc xây dựng **Hệ thống đặt món ăn trực tuyến** với các mục tiêu:
+Đồ án đã hoàn thành việc xây dựng **Website bán laptop trực tuyến (DuongTech)** với các mục tiêu:
 
 ✅ **Domain-Driven Design:** Áp dụng DDD với 4 layers cho từng service  
 ✅ **API Gateway:** Triển khai Spring Cloud Gateway với routing, CORS  
@@ -1340,16 +1340,16 @@ eureka:
 
 ```bash
 # Build all services
-docker-compose build
+docker compose -p duong build
 
 # Start all services
-docker-compose up -d
+docker compose -p duong up -d
 
 # View logs
-docker-compose logs -f service-auth
+docker compose -p duong logs -f service-auth
 
 # Stop all
-docker-compose down
+docker compose -p duong down
 ```
 
 ## Phụ lục D: Kubernetes commands
@@ -1359,10 +1359,10 @@ docker-compose down
 kubectl apply -f k8s/
 
 # View pods
-kubectl get pods -n food-ordering
+kubectl get pods -n duong
 
 # View logs
-kubectl logs -f <pod-name> -n food-ordering
+kubectl logs -f <pod-name> -n duong
 ```
 
 ---

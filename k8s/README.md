@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Thư mục này chứa các file manifest Kubernetes để triển khai hệ thống Food Ordering lên K8s cluster.
+Thư mục này chứa các file manifest Kubernetes để triển khai hệ thống DuongTech lên K8s cluster.
 
 ## 📁 Cấu trúc thư mục
 
@@ -57,47 +57,47 @@ kubectl apply -f k8s/
 
 ```bash
 # Xem tất cả pods
-kubectl get pods -n food-ordering
+kubectl get pods -n duong
 
 # Xem services
-kubectl get svc -n food-ordering
+kubectl get svc -n duong
 
 # Xem deployments
-kubectl get deployments -n food-ordering
+kubectl get deployments -n duong
 
 # Xem logs của một pod
-kubectl logs -f <pod-name> -n food-ordering
+kubectl logs -f <pod-name> -n duong
 ```
 
 ## 🌐 Truy cập ứng dụng
 
 ### Với Minikube:
 ```bash
-minikube service api-gateway -n food-ordering
+minikube service api-gateway -n duong
 ```
 
 ### Với Ingress:
 Thêm vào file hosts:
 ```
-127.0.0.1 food-ordering.local
+127.0.0.1 duong.local
 ```
 
-Truy cập: http://food-ordering.local
+Truy cập: http://duong.local
 
 ## 📊 Monitoring
 
 ```bash
 # Xem HPA status
-kubectl get hpa -n food-ordering
+kubectl get hpa -n duong
 
 # Xem resource usage
-kubectl top pods -n food-ordering
+kubectl top pods -n duong
 ```
 
 ## 🗑️ Cleanup
 
 ```bash
-kubectl delete namespace food-ordering
+kubectl delete namespace duong
 ```
 
 ---

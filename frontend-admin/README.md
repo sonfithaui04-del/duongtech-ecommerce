@@ -1,8 +1,8 @@
-# 🎛️ Admin Panel - Food Ordering System
+# 🎛️ Admin Panel - DuongTech
 
 ## 📋 Overview
 
-Premium admin dashboard for managing the Food Ordering System. Built with React, Vite, Tailwind CSS, and Recharts.
+Premium admin dashboard for managing the DuongTech. Built with React, Vite, Tailwind CSS, and Recharts.
 
 ---
 
@@ -14,8 +14,8 @@ Premium admin dashboard for managing the Food Ordering System. Built with React,
 - Recent orders overview
 - Visual analytics with Recharts
 
-### 🍔 **Menu Management**
-- ➕ Add new menu items
+### 💻 **Product Management (Sản phẩm)**
+- ➕ Add new products (laptop)
 - ✏️ Edit existing items
 - 🗑️ Delete items
 - 📂 Assign categories
@@ -23,7 +23,7 @@ Premium admin dashboard for managing the Food Ordering System. Built with React,
 - ✅ Toggle availability
 
 ### 📂 **Category Management**
-- Create food categories
+- Create product categories
 - Edit category details
 - Delete categories
 - Activate/deactivate categories
@@ -57,7 +57,7 @@ npm install
 npm run dev
 ```
 
-Admin panel will run on: **http://localhost:3002**
+Admin panel will run on: **http://localhost:3003**
 
 ### Build for Production
 
@@ -219,10 +219,10 @@ Connects to backend via API Gateway:
 
 ## 🔄 Development Workflow
 
-1. Start backend services: `docker-compose up -d`
-2. Verify API Gateway is running: http://localhost:8080
+1. Start backend services: `docker compose -p duong up -d`
+2. Verify API Gateway is running: http://localhost:9080
 3. Start admin panel: `npm run dev`
-4. Access admin: http://localhost:3002
+4. Access admin: http://localhost:3003
 5. Login with admin credentials
 
 ---
@@ -279,6 +279,6 @@ Update `vite.config.js` API proxy for production backend URL.
 
 ---
 
-**Built with ❤️ for efficient restaurant management**
+**Built with ❤️ for efficient laptop store management**
 
-**Access:** http://localhost:3002
+**Access:** http://localhost:3003

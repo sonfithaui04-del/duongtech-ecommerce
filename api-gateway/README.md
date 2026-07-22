@@ -1,7 +1,7 @@
 # API Gateway
 
 ## 📋 Mô tả
-API Gateway là cổng vào duy nhất cho tất cả requests từ client đến hệ thống Food Ordering. Gateway sẽ routing requests đến các microservices tương ứng thông qua Eureka Service Discovery.
+API Gateway là cổng vào duy nhất cho tất cả requests từ client đến hệ thống DuongTech. Gateway sẽ routing requests đến các microservices tương ứng thông qua Eureka Service Discovery.
 
 ## 🔧 Công nghệ
 - Spring Boot 3.2.1
@@ -44,28 +44,28 @@ CORS đã được cấu hình để cho phép:
 
 | Endpoint | Mô tả |
 |----------|-------|
-| http://localhost:8080/actuator/health | Health check |
-| http://localhost:8080/actuator/gateway/routes | Danh sách routes |
+| http://localhost:9080/actuator/health | Health check |
+| http://localhost:9080/actuator/gateway/routes | Danh sách routes |
 
 ## 🔗 Dependencies
 
-Gateway cần Eureka Server chạy tại: http://localhost:8761
+Gateway cần Eureka Server chạy tại: http://localhost:9761
 
 ## 📌 Example Requests
 
 ```bash
 # Auth - Register
-POST http://localhost:8080/api/auth/register
+POST http://localhost:9080/api/auth/register
 
 # Menu - Get all items
-GET http://localhost:8080/api/menu/items
+GET http://localhost:9080/api/menu/items
 
 # Orders - Create order
-POST http://localhost:8080/api/orders/create
+POST http://localhost:9080/api/orders/create
 ```
 
 ## ⚙️ Configuration
 
-- **Port**: 8080
-- **Eureka Server**: http://localhost:8761/eureka/
+- **Port (host)**: 9080 (container: 8080)
+- **Eureka Server**: http://localhost:9761/eureka/
 - **Service Name**: api-gateway

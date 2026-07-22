@@ -306,7 +306,7 @@ public class PaymentController {
         event.put("amount", amount);
         event.put("timestamp", System.currentTimeMillis());
         
-        rabbitTemplate.convertAndSend("food-ordering-exchange", "payment.confirmed", event);
+        rabbitTemplate.convertAndSend("duong-exchange", "payment.confirmed", event);
         log.info("[PAYMENT] Published PAYMENT_CONFIRMED event for Order {}", orderId);
     }
 }
@@ -594,7 +594,7 @@ public class PaymentEventListener {
         notification.put("userId", order.getUserId());
         notification.put("message", "Đơn hàng #" + order.getId() + " đã thanh toán thành công!");
 
-        rabbitTemplate.convertAndSend("food-ordering-exchange", "order.status.changed", notification);
+        rabbitTemplate.convertAndSend("duong-exchange", "order.status.changed", notification);
     }
 }
 ```
@@ -702,8 +702,8 @@ npm install -g ngrok
 ### 8.2 Chạy ngrok
 
 ```bash
-# Expose port 8080 (API Gateway)
-ngrok http 8080
+# Expose port 9080 (API Gateway)
+ngrok http 9080
 ```
 
 Bạn sẽ nhận được URL như: `https://abc123.ngrok.io`
@@ -776,4 +776,4 @@ https://abc123.ngrok.io/api/payments/sepay/webhook
 
 ---
 
-> 📌 **Lưu ý**: Tài liệu này dựa trên hệ thống Food Ordering. Bạn cần điều chỉnh entity names, routing keys, và logic business phù hợp với dự án của mình.
+> 📌 **Lưu ý**: Tài liệu này dựa trên hệ thống DuongTech. Bạn cần điều chỉnh entity names, routing keys, và logic business phù hợp với dự án của mình.

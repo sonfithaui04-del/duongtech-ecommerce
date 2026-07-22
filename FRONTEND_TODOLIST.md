@@ -1,11 +1,11 @@
-# 🎯 FRONTEND TODOLIST - React App for Food Ordering System
+# 🎯 FRONTEND TODOLIST - React App for DuongTech
 
 ## 📋 CONTEXT (Cho conversation mới)
 
-**Project:** Food Ordering System Microservices  
+**Project:** DuongTech Microservices  
 **Backend:** 100% Complete - 6 microservices running on Docker  
 **Frontend:** Đã setup cơ bản, cần implement full React app  
-**Location:** `/food-ordering/frontend/`  
+**Location:** `/Duong/frontend/`  
 **Tech Stack:** React 18 + Vite + TailwindCSS + React Router + Axios
 
 ---
@@ -365,11 +365,11 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="text-2xl font-bold text-blue-600">
-            🍔 FoodOrder
+            💻 DuongTech
           </Link>
           
           <div className="flex gap-6 items-center">
-            <Link to="/menu" className="hover:text-blue-600">Menu</Link>
+            <Link to="/menu" className="hover:text-blue-600">Sản phẩm</Link>
             
             {user ? (
               <>
@@ -408,7 +408,7 @@ export default function Footer() {
   return (
     <footer className="bg-gray-800 text-white py-8 mt-20">
       <div className="container mx-auto px-4 text-center">
-        <p>&copy; 2025 Food Ordering System. All rights reserved.</p>
+        <p>&copy; 2025 DuongTech. All rights reserved.</p>
         <p className="mt-2 text-gray-400">Microservices Architecture Demo</p>
       </div>
     </footer>
@@ -434,7 +434,7 @@ export default function Footer() {
 - Validation
 
 #### □ `src/pages/MenuPage.jsx`
-- Display menu items from Menu Service
+- Display sản phẩm (laptop) from Menu Service
 - Add to cart functionality
 
 #### □ `src/pages/CartPage.jsx`
@@ -466,14 +466,14 @@ npm install
 npm run dev
 ```
 
-**Access:** http://localhost:3000
+**Access:** http://localhost:3001
 
 ---
 
 ## 📝 NOTES FOR NEW CONVERSATION
 
 **What to say to start:**
-"Tôi cần tiếp tục tạo React frontend cho Food Ordering System. Backend đã chạy đầy đủ 6 microservices. Hãy đọc file FRONTEND_TODOLIST.md và tiếp tục tạo các files còn lại."
+"Tôi cần tiếp tục tạo React frontend cho DuongTech. Backend đã chạy đầy đủ 6 microservices. Hãy đọc file FRONTEND_TODOLIST.md và tiếp tục tạo các files còn lại."
 
 **Current Status:**
 - Backend: 100% (All 6 services running on Docker)
@@ -493,10 +493,10 @@ npm run dev
 
 - [ ] All 20 files created
 - [ ] `npm install` runs successfully
-- [ ] `npm run dev` starts app on port 3000
+- [ ] `npm run dev` starts app on port 3001
 - [ ] Can register user via Auth Service
 - [ ] Can login and see JWT token stored
-- [ ] Can browse menu from Menu Service
+- [ ] Can browse sản phẩm from Menu Service
 - [ ] Can add items to cart
 - [ ] Can create order via Order Service
 - [ ] Can view order history
@@ -506,12 +506,12 @@ npm run dev
 
 ## 🔗 Backend APIs Available
 
-- **Auth:** http://localhost:8080/api/auth/*
-- **Menu:** http://localhost:8080/api/menu & /categories
-- **Orders:** http://localhost:8080/api/orders/*
-- **Payments:** http://localhost:8080/api/payments
-- **Inventory:** http://localhost:8080/api/inventory/*
-- **Notifications:** http://localhost:8080/api/notifications
+- **Auth:** http://localhost:9080/api/auth/*
+- **Menu:** http://localhost:9080/api/menu & /categories
+- **Orders:** http://localhost:9080/api/orders/*
+- **Payments:** http://localhost:9080/api/payments
+- **Inventory:** http://localhost:9080/api/inventory/*
+- **Notifications:** http://localhost:9080/api/notifications
 
 All proxied through Vite to avoid CORS issues.
 

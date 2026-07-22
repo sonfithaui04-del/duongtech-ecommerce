@@ -12,7 +12,7 @@
 
 #### Configuration (6 files)
 - ✅ `package.json` - Dependencies with Recharts
-- ✅ `vite.config.js` - Vite config (port 3002)
+- ✅ `vite.config.js` - Vite config (port 3003)
 - ✅ `index.html` - HTML entry point
 - ✅ `tailwind.config.js` - Custom admin theme
 - ✅ `postcss.config.js` - PostCSS setup
@@ -29,40 +29,39 @@
 #### Components (1 file)
 - ✅ `src/components/Layout.jsx` - Admin layout with sidebar
 
-#### Pages (6 files)
+#### Pages (7 files)
 - ✅ `src/pages/LoginPage.jsx` - Admin login
 - ✅ `src/pages/Dashboard.jsx` - Stats & charts
-- ✅ `src/pages/MenuManagement.jsx` - Full CRUD for menu
+- ✅ `src/pages/MenuManagement.jsx` - Full CRUD for products (laptop)
 - ✅ `src/pages/CategoryManagement.jsx` - Category CRUD
 - ✅ `src/pages/OrderManagement.jsx` - Order management
 - ✅ `src/pages/UserManagement.jsx` - User list
-- ✅ `src/pages/IngredientManagement.jsx` - Inventory tracking
-- ✅ `src/pages/RecipeManagement.jsx` - Recipe builder
+- ✅ `src/pages/IngredientManagement.jsx` - Quản lý tồn kho
 
 ---
 
 ## 🚀 RUNNING STATUS
 
 ✅ **Dependencies Installed:** 192 packages (including Recharts)  
-✅ **Dev Server Running:** Port **3002**  
-✅ **Backend Connected:** API Gateway http://localhost:8080
+✅ **Dev Server Running:** Port **3003**  
+✅ **Backend Connected:** API Gateway http://localhost:9080
 
 **Access Admin Panel:**  
-🌐 **http://localhost:3002**
+🌐 **http://localhost:3003**
 
 ---
 
 ## 🎨 PREMIUM FEATURES
 
 ### 🎯 Dashboard
-- 📊 **4 Statistics Cards** - Orders, Revenue, Menu Items, Users
+- 📊 **4 Statistics Cards** - Orders, Revenue, Products, Users
 - 📈 **Bar Chart** - Weekly orders visualization
 - 📉 **Line Chart** - Revenue trends
 - 📋 **Recent Orders Table** - Latest 5 orders
 - 🎨 **Gradient Cards** - Blue, Green, Purple, Orange themes
 
-### 🍔 Menu Management
-- ➕ **Add Menu Items** - Modal form with validation
+### 💻 Product Management (Sản phẩm)
+- ➕ **Add Products** - Modal form with validation
 - ✏️ **Edit Items** - Update name, price, description, category
 - 🗑️ **Delete Items** - Confirm before delete
 - 📂 **Category Selection** - Dropdown with all categories
@@ -92,17 +91,11 @@
 - 👤 **User Avatar** - Initial-based avatars
 - 📧 **Contact Info** - Email & phone display
 
-### 🥕 Ingredient Management
+### 📦 Inventory Management (Tồn kho)
 - 📋 **Inventory Tracking** - Monitor stock levels
-- ➕ **Add Ingredients** - Define units, cost, expiry
+- ➕ **Add Stock** - Cập nhật số lượng, giá nhập
 - ⚠️ **Low Stock Alerts** - Visual indicators
 - 📊 **Cost Management** - Track cost per unit
-
-### 👨‍🍳 Recipe Management
-- 🍳 **Recipe Builder** - Link menu items to ingredients
-- 📝 **Quantity Definition** - Precise measurements
-- 🔄 **Dynamic Form** - Add/remove ingredients easily
-- 📋 **Menu Integration** - Select from existing menu items
 
 ---
 
@@ -241,8 +234,8 @@ frontend-admin/
 
 ### 1. Start Backend
 ```bash
-cd food-ordering
-docker-compose up -d
+cd Duong
+docker compose -p duong up -d
 ```
 
 ### 2. Start Admin Panel
@@ -252,7 +245,7 @@ npm run dev
 ```
 
 ### 3. Access Admin Panel
-🌐 **http://localhost:3002**
+🌐 **http://localhost:3003**
 
 ### 4. Login
 - Use admin credentials
@@ -260,8 +253,8 @@ npm run dev
 
 ### 5. Manage System
 - **Dashboard** → View analytics
-- **Menu Items** → Add/Edit/Delete food items
-- **Categories** → Manage food categories
+- **Sản phẩm** → Add/Edit/Delete products (laptop)
+- **Danh mục** → Manage product categories
 - **Orders** → Update order status
 - **Users** → View system users
 
@@ -269,15 +262,15 @@ npm run dev
 
 ## 📈 SYSTEM OVERVIEW
 
-**Complete Food Ordering System:**
+**Complete DuongTech:**
 
 | Component | Port | Status | Description |
 |-----------|------|--------|-------------|
 | **Customer Frontend** | 3001 | ✅ Running | User-facing app |
-| **Admin Panel** | 3002 | ✅ Running | Management dashboard |
-| **API Gateway** | 8080 | ✅ Running | Backend gateway |
-| **Eureka Server** | 8761 | ✅ Running | Service discovery |
-| **6 Microservices** | 8081-8086 | ✅ Running | Backend services |
+| **Admin Panel** | 3003 | ✅ Running | Management dashboard |
+| **API Gateway** | 9080 | ✅ Running | Backend gateway |
+| **Eureka Server** | 9761 | ✅ Running | Service discovery |
+| **7 Microservices** | 9081-9086/9089 | ✅ Running | Backend services |
 
 ---
 
@@ -315,11 +308,11 @@ You now have a **COMPLETE ADMIN PANEL** with:
 
 | Application | URL | Purpose |
 |------------|-----|---------|
-| **Admin Panel** | http://localhost:3002 | System management |
-| **Customer App** | http://localhost:3001 | Order food |
-| **API Gateway** | http://localhost:8080 | Backend APIs |
-| **Eureka** | http://localhost:8761 | Service registry |
-| **RabbitMQ** | http://localhost:15672 | Message broker |
+| **Admin Panel** | http://localhost:3003 | System management |
+| **Customer App** | http://localhost:3001 | Mua laptop |
+| **API Gateway** | http://localhost:9080 | Backend APIs |
+| **Eureka** | http://localhost:9761 | Service registry |
+| **RabbitMQ** | http://localhost:16672 | Message broker |
 
 ---
 
@@ -357,7 +350,7 @@ A **COMPLETE FULL-STACK MICROSERVICES SYSTEM** with:
 
 ## 🎊 CONGRATULATIONS!
 
-Your **Food Ordering System** is now **COMPLETE** with:
+Your **DuongTech** is now **COMPLETE** with:
 
 ✅ Customer ordering app  
 ✅ Admin management panel  
@@ -370,4 +363,4 @@ Your **Food Ordering System** is now **COMPLETE** with:
 
 ---
 
-**Built with ❤️ for efficient restaurant management**
+**Built with ❤️ for efficient laptop store management**

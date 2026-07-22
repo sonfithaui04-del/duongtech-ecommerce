@@ -1,4 +1,4 @@
-# 🏗️ Architecture Overview - Food Ordering System
+# 🏗️ Architecture Overview - DuongTech
 
 ## 📊 System Architecture Diagram
 
@@ -15,7 +15,7 @@
                           │
                           ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                      API GATEWAY (Port 8080)                      │
+│                      API GATEWAY (Port 9080)                      │
 │  ┌─────────────────────────────────────────────────────────┐    │
 │  │  • Routing              • Rate Limiting                  │    │
 │  │  • Load Balancing       • CORS Configuration             │    │
@@ -25,7 +25,7 @@
                           │
                           ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│              EUREKA SERVER - Service Discovery (8761)             │
+│              EUREKA SERVER - Service Discovery (9761)             │
 │  ┌─────────────────────────────────────────────────────────┐    │
 │  │  • Service Registry                                      │    │
 │  │  • Health Monitoring                                     │    │
@@ -39,7 +39,7 @@
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
 │    Auth      │  │    Menu      │  │    Order     │
 │  Service     │  │   Service    │  │   Service    │
-│  (8081)      │  │   (8082)     │  │   (8083)     │
+│  (9081)      │  │   (9082)     │  │   (9083)     │
 ├──────────────┤  ├──────────────┤  ├──────────────┤
 │ • Register   │  │ • Items CRUD │  │ • Create     │
 │ • Login      │  │ • Categories │  │ • Update     │
@@ -50,7 +50,7 @@
        ▼                 ▼                 ▼
   ┌─────────┐      ┌─────────┐       ┌─────────┐
   │   DB    │      │   DB    │       │   DB    │
-  │  5432   │      │  5433   │       │  5434   │
+  │  6438   │      │  6433   │       │  6434   │
   └─────────┘      └─────────┘       └─────────┘
 
         ┌─────────────────┼─────────────────┐
@@ -59,7 +59,7 @@
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
 │  Inventory   │  │   Payment    │  │Notification  │
 │   Service    │  │   Service    │  │   Service    │
-│   (8084)     │  │   (8085)     │  │   (8086)     │
+│   (9085)     │  │   (9084)     │  │   (9086)     │
 ├──────────────┤  ├──────────────┤  ├──────────────┤
 │ • Stock      │  │ • Process    │  │ • Email      │
 │ • Update     │  │ • Validate   │  │ • SMS        │
@@ -70,7 +70,7 @@
        ▼                 ▼                 ▼
   ┌─────────┐      ┌─────────┐       (External)
   │   DB    │      │   DB    │       Email/SMS API
-  │  5435   │      │  5436   │
+  │  6436   │      │  6435   │
   └─────────┘      └─────────┘
 ```
 
@@ -78,7 +78,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                    RABBITMQ MESSAGE BROKER (5672)                 │
+│                    RABBITMQ MESSAGE BROKER (6672)                 │
 │  ┌─────────────────────────────────────────────────────────┐    │
 │  │                     EXCHANGES                            │    │
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │    │
@@ -268,12 +268,12 @@ orders                      order_items
            Body: { items: [...] }
            │
            ▼
-2. API Gateway (Port 8080)
+2. API Gateway (Port 9080)
    • Validate request
    • Route to Order Service
            │
            ▼
-3. Order Service (Port 8083)
+3. Order Service (Port 9083)
    • Extract user from JWT token
    • CreateOrderUseCase.execute()
    • Save order to database
