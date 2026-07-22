@@ -1,8 +1,8 @@
-# Kubernetes Namespace for Food Ordering System
+# Kubernetes Namespace for DuongTech
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: food-ordering
+  name: duongtech
   labels:
-    app: food-ordering
+    app: duongtech
     environment: production

@@ -12,7 +12,7 @@ services:
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     networks:
-      - food-ordering-network
+      - duongtech-network
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
@@ -28,7 +28,7 @@ services:
     ports:
       - "9761:8761"
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   # API Gateway
   api-gateway:
@@ -43,14 +43,14 @@ services:
     depends_on:
       - eureka-server
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   # Auth Service
   postgres-auth:
     image: postgres:15-alpine
     container_name: duong-postgres-auth
     environment:
-      POSTGRES_DB: food_ordering_auth
+      POSTGRES_DB: duongtech_auth
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 10112004
     ports:
@@ -58,7 +58,7 @@ services:
     volumes:
       - postgres-auth-data:/var/lib/postgresql/data
     networks:
-      - food-ordering-network
+      - duongtech-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -73,7 +73,7 @@ services:
     ports:
       - "9081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/food_ordering_auth
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/duongtech_auth
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
@@ -83,14 +83,14 @@ services:
       eureka-server:
         condition: service_started
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   # Menu Service
   postgres-menu:
     image: postgres:15-alpine
     container_name: duong-postgres-menu
     environment:
-      POSTGRES_DB: food_ordering_menu
+      POSTGRES_DB: duongtech_menu
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 10112004
     ports:
@@ -98,7 +98,7 @@ services:
     volumes:
       - postgres-menu-data:/var/lib/postgresql/data
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   service-menu:
     build:
@@ -108,7 +108,7 @@ services:
     ports:
       - "9082:8082"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-menu:5432/food_ordering_menu
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-menu:5432/duongtech_menu
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
@@ -116,14 +116,14 @@ services:
       - postgres-menu
       - eureka-server
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   # Order Service
   postgres-order:
     image: postgres:15-alpine
     container_name: duong-postgres-order
     environment:
-      POSTGRES_DB: food_ordering_order
+      POSTGRES_DB: duongtech_order
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 10112004
     ports:
@@ -131,7 +131,7 @@ services:
     volumes:
       - postgres-order-data:/var/lib/postgresql/data
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   service-order:
     build:
@@ -141,7 +141,7 @@ services:
     ports:
       - "9083:8083"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-order:5432/food_ordering_order
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-order:5432/duongtech_order
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -153,14 +153,14 @@ services:
       - rabbitmq
       - eureka-server
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   # Payment Service
   postgres-payment:
     image: postgres:15-alpine
     container_name: duong-postgres-payment
     environment:
-      POSTGRES_DB: food_ordering_payment
+      POSTGRES_DB: duongtech_payment
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 10112004
     ports:
@@ -168,7 +168,7 @@ services:
     volumes:
       - postgres-payment-data:/var/lib/postgresql/data
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   service-payment:
     build:
@@ -178,7 +178,7 @@ services:
     ports:
       - "9084:8084"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-payment:5432/food_ordering_payment
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-payment:5432/duongtech_payment
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
@@ -189,14 +189,14 @@ services:
       - postgres-payment
       - eureka-server
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   # Inventory Service
   postgres-inventory:
     image: postgres:15-alpine
     container_name: duong-postgres-inventory
     environment:
-      POSTGRES_DB: food_ordering_inventory
+      POSTGRES_DB: duongtech_inventory
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 10112004
     ports:
@@ -204,7 +204,7 @@ services:
     volumes:
       - postgres-inventory-data:/var/lib/postgresql/data
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   service-inventory:
     build:
@@ -214,7 +214,7 @@ services:
     ports:
       - "9085:8085"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-inventory:5432/food_ordering_inventory
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-inventory:5432/duongtech_inventory
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -226,14 +226,14 @@ services:
       - rabbitmq
       - eureka-server
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   # Notification Service
   postgres-notification:
     image: postgres:15-alpine
     container_name: duong-postgres-notification
     environment:
-      POSTGRES_DB: food_ordering_notification
+      POSTGRES_DB: duongtech_notification
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 10112004
     ports:
@@ -241,7 +241,7 @@ services:
     volumes:
       - postgres-notification-data:/var/lib/postgresql/data
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   service-socket:
     build: ./service-socket
@@ -255,7 +255,7 @@ services:
       - eureka-server
       - rabbitmq
     networks:
-      - food-ordering-network
+      - duongtech-network
 
   service-notification:
     build:
@@ -265,7 +265,7 @@ services:
     ports:
       - "9086:8086"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-notification:5432/food_ordering_notification
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-notification:5432/duongtech_notification
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -277,7 +277,7 @@ services:
       - rabbitmq
       - eureka-server
     networks:
-      - food-ordering-network
+      - duongtech-network
 
 volumes:
   postgres-auth-data:
@@ -289,5 +289,5 @@ volumes:
   rabbitmq-data:
 
 networks:
-  food-ordering-network:
+  duongtech-network:
     driver: bridge
