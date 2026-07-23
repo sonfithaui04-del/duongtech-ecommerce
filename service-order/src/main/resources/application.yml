@@ -12,8 +12,14 @@ spring:
     password: 10112004
     driver-class-name: org.postgresql.Driver
   
+  # Tự động nạp dữ liệu mẫu từ classpath:data.sql (chạy sau khi Hibernate tạo bảng)
+  sql:
+    init:
+      mode: always
+
   # JPA Configuration
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     show-sql: true

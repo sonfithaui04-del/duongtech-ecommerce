@@ -102,9 +102,11 @@ cd Duong
 Toàn bộ backend (Eureka, Gateway, 7 service, RabbitMQ, 6 PostgreSQL) chạy dưới project name `duong`:
 
 ```bash
-docker compose -p duong up -d
+docker compose -p duong up -d --build
 ```
-Lần đầu build có thể mất vài phút. Kiểm tra trạng thái: `docker compose -p duong ps`.
+Lần đầu build có thể mất vài phút (~1–2 phút). Kiểm tra trạng thái: `docker compose -p duong ps`.
+
+> 📦 **Dữ liệu mẫu tự nạp:** Ngay lần chạy đầu tiên, backend tự động nạp dữ liệu demo — **112 laptop** (5 danh mục), **17 đơn hàng** và **tồn kho** — nhờ cơ chế `data.sql` của Spring Boot. Không cần import thủ công. Cơ chế idempotent: chỉ nạp khi database còn rỗng, chạy lại `up` sẽ không tạo trùng.
 
 Truy cập kiểm tra:
 - **Eureka Dashboard:** http://localhost:9761
@@ -145,7 +147,7 @@ Cả hai app proxy `/api` tới API Gateway `http://localhost:9080`.
 ## 👤 Tài khoản Admin (demo)
 
 ```
-Email:    admin@foodorder.com
+Email:    admin@duongtech.com
 Password: admin123
 Role:     ADMIN
 ```

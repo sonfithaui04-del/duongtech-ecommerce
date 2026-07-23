@@ -7,7 +7,12 @@ spring:
     url: jdbc:postgresql://localhost:5436/duongtech_inventory
     username: postgres
     password: 10112004
+  # Tự động nạp dữ liệu mẫu từ classpath:data.sql (chạy sau khi Hibernate tạo bảng)
+  sql:
+    init:
+      mode: always
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     show-sql: true
