@@ -198,29 +198,29 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-menu
+  name: service-product
   namespace: duongtech
   labels:
-    app: service-menu
+    app: service-product
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: service-menu
+      app: service-product
   template:
     metadata:
       labels:
-        app: service-menu
+        app: service-product
     spec:
       containers:
-        - name: service-menu
-          image: duongtech-service-menu:latest
+        - name: service-product
+          image: duongtech-service-product:latest
           imagePullPolicy: Never  # Use local image
           ports:
             - containerPort: 8082
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres-menu:5432/duongtech_menu"
+              value: "jdbc:postgresql://postgres-product:5432/duongtech_product"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -248,11 +248,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-menu
+  name: service-product
   namespace: duongtech
 spec:
   selector:
-    app: service-menu
+    app: service-product
   ports:
     - port: 8082
       targetPort: 8082

@@ -17,7 +17,7 @@ export default function CartPage() {
             <h2 className="text-2xl font-bold text-white mb-2">Giỏ hàng trống</h2>
             <p className="text-slate-400 mb-8">Có vẻ như bạn chưa thêm sản phẩm nào.</p>
             <Link
-              to="/menu"
+              to="/products"
               className="inline-flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/40 transition-all"
             >
               Bắt đầu mua sắm <ArrowRight size={20} />
@@ -32,7 +32,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-slate-950">
       <div className="container mx-auto px-4 pt-32 pb-20">
         <div className="flex items-center gap-4 mb-8">
-          <Link to="/menu" className="p-2 bg-slate-900 border border-white/10 rounded-xl text-slate-400 hover:text-cyan-400 hover:border-cyan-400/40 transition-all">
+          <Link to="/products" className="p-2 bg-slate-900 border border-white/10 rounded-xl text-slate-400 hover:text-cyan-400 hover:border-cyan-400/40 transition-all">
             <ArrowLeft size={24} />
           </Link>
           <h1 className="text-3xl font-bold text-white">Giỏ hàng <span className="text-slate-500 text-lg font-normal">({cart.length} sản phẩm)</span></h1>

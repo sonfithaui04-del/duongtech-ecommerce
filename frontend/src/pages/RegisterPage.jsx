@@ -36,7 +36,7 @@ export default function RegisterPage() {
 
     try {
       await register(formData)
-      navigate('/menu')
+      navigate('/products')
     } catch (err) {
       setError(err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.')
     } finally {

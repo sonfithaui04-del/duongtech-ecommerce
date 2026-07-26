@@ -187,7 +187,7 @@ export default function MyOrdersPage() {
               <h2 className="text-2xl font-bold text-white mb-2">Chưa có đơn hàng nào</h2>
               <p className="text-slate-400 mb-8">Có vẻ như bạn chưa đặt sản phẩm nào.</p>
               <Link
-                to="/menu"
+                to="/products"
                 className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/40 transition-all"
               >
                 Mua ngay <ChevronRight size={20} />
@@ -234,7 +234,7 @@ export default function MyOrdersPage() {
                               <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-950 border border-white/10 shrink-0">
                                 <img
                                   src={item.imageUrl || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=100&q=80'}
-                                  alt={item.menuItemName}
+                                  alt={item.productName}
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
                                     e.target.onerror = null;
@@ -243,7 +243,7 @@ export default function MyOrdersPage() {
                                 />
                               </div>
                               <div>
-                                <span className="font-medium text-slate-200">{item.menuItemName}</span>
+                                <span className="font-medium text-slate-200">{item.productName}</span>
                                 <p className="text-sm text-slate-500">x{item.quantity}</p>
                               </div>
                             </div>

@@ -4,8 +4,8 @@
 -- SQL thuần (không dollar-quoting / PL-pgSQL). Idempotent bằng WHERE NOT EXISTS (...).
 -- =====================================================================
 
--- 6 mặt hàng (chỉ chèn khi bảng ingredients đang rỗng)
-INSERT INTO ingredients (name, unit, quantity, min_quantity, cost_per_unit, expiry_date, description, active, created_at, updated_at)
+-- 6 mặt hàng (chỉ chèn khi bảng inventoryItems đang rỗng)
+INSERT INTO inventory_items (name, unit, quantity, min_quantity, cost_per_unit, expiry_date, description, active, created_at, updated_at)
 SELECT * FROM (VALUES
   ('RAM DDR5 16GB',            'thanh', 120, 20, 1200000, NULL::date, 'RAM DDR5 16GB 4800MHz cho laptop.',               true, NOW(), NOW()),
   ('SSD NVMe 1TB',             'cái',    80, 15, 1800000, NULL,       'Ổ cứng SSD NVMe PCIe Gen4 1TB.',                  true, NOW(), NOW()),
@@ -14,7 +14,7 @@ SELECT * FROM (VALUES
   ('Bàn phím laptop thay thế', 'cái',    60, 10,  450000, NULL,       'Bàn phím thay thế cho laptop phổ thông.',         true, NOW(), NOW()),
   ('Màn hình laptop 15.6" FHD','cái',    25,  5, 1500000, NULL,       'Panel màn hình 15.6 inch Full HD.',               true, NOW(), NOW())
 ) AS t(name, unit, quantity, min_quantity, cost_per_unit, expiry_date, description, active, created_at, updated_at)
-WHERE NOT EXISTS (SELECT 1 FROM ingredients);
+WHERE NOT EXISTS (SELECT 1 FROM inventory_items);
 
 -- Đồng bộ sequence IDENTITY để insert sau này không đụng id
-SELECT setval(pg_get_serial_sequence('ingredients', 'id'), COALESCE((SELECT MAX(id) FROM ingredients), 1), true);
+SELECT setval(pg_get_serial_sequence('inventory_items', 'id'), COALESCE((SELECT MAX(id) FROM inventory_items), 1), true);

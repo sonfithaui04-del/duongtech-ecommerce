@@ -13,7 +13,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const res = await axios.get('/api/menu?availableOnly=true')
+        const res = await axios.get('/api/products?availableOnly=true')
         // Get top 4 items
         setFeaturedItems(res.data.slice(0, 4))
       } catch (error) {
@@ -78,7 +78,7 @@ export default function HomePage() {
             return (
               <Link
                 key={cat.id}
-                to="/menu"
+                to="/products"
                 className="group relative overflow-hidden rounded-2xl border border-white/10 aspect-[4/5] hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent z-10"></div>
@@ -112,7 +112,7 @@ export default function HomePage() {
               <span className="text-cyan-400 font-bold tracking-[0.2em] uppercase text-sm">Phổ biến</span>
               <h2 className="text-3xl md:text-4xl font-bold text-white mt-2">Sản phẩm bán chạy</h2>
             </div>
-            <Link to="/menu" className="hidden md:flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors">
+            <Link to="/products" className="hidden md:flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors">
               Xem tất cả <ArrowRight size={20} />
             </Link>
           </div>
@@ -171,7 +171,7 @@ export default function HomePage() {
           )}
 
           <div className="mt-12 text-center md:hidden">
-            <Link to="/menu" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30">
+            <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30">
               Xem tất cả <ArrowRight size={20} />
             </Link>
           </div>

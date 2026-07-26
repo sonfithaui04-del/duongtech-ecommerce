@@ -89,7 +89,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Trang chủ', path: '/' },
-    { name: 'Sản phẩm', path: '/menu' },
+    { name: 'Sản phẩm', path: '/products' },
     { name: compareList.length ? `So sánh (${compareList.length})` : 'So sánh', path: '/compare' },
     ...(user ? [{ name: 'Đơn hàng', path: '/my-orders' }] : []),
     ...(user?.role === 'SHIPPER' ? [{ name: 'Shipper', path: '/shipper' }] : [])

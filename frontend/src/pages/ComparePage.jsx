@@ -56,7 +56,7 @@ export default function ComparePage() {
             </div>
             <h3 className="text-2xl font-bold text-white mb-2">Chưa có sản phẩm để so sánh</h3>
             <p className="text-slate-400 mb-6">Vào trang sản phẩm và bấm "So sánh" trên các laptop bạn quan tâm.</p>
-            <Link to="/menu" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 hover:shadow-cyan-500/40 transition-all">
+            <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 hover:shadow-cyan-500/40 transition-all">
               Xem sản phẩm <ArrowRight size={20} />
             </Link>
           </div>

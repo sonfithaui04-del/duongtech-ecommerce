@@ -4,7 +4,7 @@ import Footer from './components/Footer'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-import MenuPage from './pages/MenuPage'
+import ProductPage from './pages/ProductPage'
 import ComparePage from './pages/ComparePage'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
@@ -12,6 +12,7 @@ import MyOrdersPage from './pages/MyOrdersPage'
 import OAuth2RedirectHandler from './pages/OAuth2RedirectHandler'
 import ShipperDashboard from './pages/ShipperDashboard'
 import CompareBar from './components/CompareBar'
+import AiChatWidget from './components/AiChatWidget'
 import { Toaster } from 'react-hot-toast'
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/menu" element={<MenuPage />} />
+          <Route path="/products" element={<ProductPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
@@ -35,6 +36,7 @@ function App() {
       </main>
       <CompareBar />
       <Footer />
+      <AiChatWidget />
     </div>
   )
 }

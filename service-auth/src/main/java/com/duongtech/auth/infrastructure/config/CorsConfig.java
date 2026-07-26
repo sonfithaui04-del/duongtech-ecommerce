@@ -22,9 +22,9 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         
         // Allowed Origins (Gateway & Frontends)
-        config.addAllowedOrigin("http://localhost:8080"); // API Gateway
-        config.addAllowedOrigin("http://localhost:3000"); // Frontend Node
-        config.addAllowedOrigin("http://localhost:3002"); // Admin Panel
+        config.addAllowedOrigin("http://localhost:9080"); // API Gateway (DuongTech)
+        config.addAllowedOrigin("http://localhost:3001"); // Frontend khách (DuongTech)
+        config.addAllowedOrigin("http://localhost:3003"); // Admin Panel (DuongTech)
         
         // Allowed Headers
         config.addAllowedHeader("*");

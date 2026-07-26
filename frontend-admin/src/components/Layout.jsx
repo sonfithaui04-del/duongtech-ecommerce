@@ -93,12 +93,12 @@ export default function Layout({ children }) {
     navigate('/login')
   }
 
-  const menuItems = [
+  const navItems = [
     { path: '/', icon: LayoutDashboard, label: 'Tổng quan' },
     { path: '/orders', icon: ShoppingBag, label: 'Đơn hàng' },
-    { path: '/menu', icon: Laptop, label: 'Sản phẩm' },
+    { path: '/products', icon: Laptop, label: 'Sản phẩm' },
     { path: '/categories', icon: FolderOpen, label: 'Danh mục' },
-    { path: '/ingredients', icon: Boxes, label: 'Tồn kho' },
+    { path: '/inventoryItems', icon: Boxes, label: 'Tồn kho' },
     { path: '/users', icon: Users, label: 'Người dùng' }
   ]
 
@@ -123,7 +123,7 @@ export default function Layout({ children }) {
 
         {/* Navigation */}
         <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto custom-scrollbar">
-          {menuItems.map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon
             const isActive = location.pathname === item.path
             
@@ -191,7 +191,7 @@ export default function Layout({ children }) {
               <Menu size={20} />
             </button>
             <h2 className="text-lg font-semibold text-gray-800">
-              {menuItems.find(i => i.path === location.pathname)?.label || 'Tổng quan'}
+              {navItems.find(i => i.path === location.pathname)?.label || 'Tổng quan'}
             </h2>
           </div>
 

@@ -1,7 +1,7 @@
 -- =====================================================================
 -- DuongTech · service-order · seed data (auto-loaded by Spring Boot)
 -- 17 đơn hàng + 24 dòng order_items (id tường minh + setval).
--- menu_item_id/name tham chiếu 12 sản phẩm gốc của service-menu.
+-- product_id/name tham chiếu 12 sản phẩm gốc của service-product.
 -- SQL thuần (không dollar-quoting / PL-pgSQL). Idempotent bằng WHERE NOT EXISTS (...).
 -- =====================================================================
 
@@ -29,7 +29,7 @@ SELECT * FROM (VALUES
 WHERE NOT EXISTS (SELECT 1 FROM orders);
 
 -- 24 dòng order_items (guard theo bảng order_items để idempotent độc lập)
-INSERT INTO order_items (id, order_id, menu_item_id, menu_item_name, quantity, price, subtotal)
+INSERT INTO order_items (id, order_id, product_id, product_name, quantity, price, subtotal)
 SELECT * FROM (VALUES
   (1,  1,  1,  'Asus ROG Strix G16',         1, 32000000, 32000000),
   (2,  1,  12, 'Balo laptop chống sốc',      1,   500000,   500000),
@@ -55,7 +55,7 @@ SELECT * FROM (VALUES
   (22, 16, 12, 'Balo laptop chống sốc',      1,   500000,   500000),
   (23, 17, 7,  'MacBook Pro 14 M3 Pro',      1, 48000000, 48000000),
   (24, 17, 11, 'Chuột Logitech MX Master 3S',1,  2500000,  2500000)
-) AS t(id, order_id, menu_item_id, menu_item_name, quantity, price, subtotal)
+) AS t(id, order_id, product_id, product_name, quantity, price, subtotal)
 WHERE NOT EXISTS (SELECT 1 FROM order_items);
 
 -- Đồng bộ sequence IDENTITY để insert sau này không đụng id

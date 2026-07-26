@@ -31,7 +31,7 @@ const OAuth2RedirectHandler = () => {
                 toast.success('Đăng nhập Google thành công! 🎉');
                 
                 // Reload home/menu to refresh context
-                window.location.href = '/menu';
+                window.location.href = '/products';
             } catch (error) {
                 console.error('Failed to parse OAuth2 token', error);
                 toast.error('Lỗi xác thực Google');

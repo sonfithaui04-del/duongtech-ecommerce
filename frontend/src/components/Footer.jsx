@@ -76,10 +76,10 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <h4 className="text-white font-bold mb-5 text-sm uppercase tracking-wider">Sản phẩm</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/menu" className="hover:text-cyan-400 transition-colors">Laptop Gaming</Link></li>
-              <li><Link to="/menu" className="hover:text-cyan-400 transition-colors">Laptop Văn phòng</Link></li>
-              <li><Link to="/menu" className="hover:text-cyan-400 transition-colors">Laptop Đồ hoạ</Link></li>
-              <li><Link to="/menu" className="hover:text-cyan-400 transition-colors">Ultrabook</Link></li>
+              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Laptop Gaming</Link></li>
+              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Laptop Văn phòng</Link></li>
+              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Laptop Đồ hoạ</Link></li>
+              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Ultrabook</Link></li>
               <li><Link to="/compare" className="hover:text-cyan-400 transition-colors">So sánh cấu hình</Link></li>
             </ul>
           </div>
