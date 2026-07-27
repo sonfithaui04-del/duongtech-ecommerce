@@ -87,6 +87,8 @@ Customer App (3001)  Admin Panel (3003)
 
 ---
 
+> 📘 **Muốn hiểu hệ thống hoạt động ra sao** (kiến trúc, luồng đặt hàng, RabbitMQ, DDD, các điểm yếu đã biết) — đọc [DOC_HIEU_HE_THONG.md](DOC_HIEU_HE_THONG.md).
+
 ## 🚀 Hướng dẫn chạy
 
 ### Yêu cầu
