@@ -112,5 +112,5 @@ kubectl port-forward -n duong svc/api-gateway 9080:8080
 - Restart Gateway: `kubectl rollout restart deployment/api-gateway -n duong`
 
 **3. Database trống trơn:**
-- Đây là bình thường vì Kubernetes trên Docker Desktop thường không giữ data khi xóa namespace trừ khi cấu hình HostPath đặc biệt. Bạn sẽ cần tạo lại dữ liệu test (Tài khoản, Menu, v.v.).
+- Đây là bình thường vì Kubernetes trên Docker Desktop thường không giữ data khi xóa namespace trừ khi cấu hình HostPath đặc biệt. Bạn sẽ cần tạo lại dữ liệu test (Tài khoản, Sản phẩm, v.v.).
 

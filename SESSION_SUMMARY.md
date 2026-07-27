@@ -18,7 +18,7 @@
 
 ✅ **Microservices (6/6):**
 1. Service-Auth (9081) - JWT Authentication
-2. Service-Menu (9082) - Menu Management
+2. Service-Product (9082) - Product Management
 3. Service-Order (9083) - Order Processing
 4. Service-Payment (9084) - Payment Handling
 5. Service-Inventory (9085) - Stock Management

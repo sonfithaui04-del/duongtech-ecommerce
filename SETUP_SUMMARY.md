@@ -81,7 +81,7 @@
 | Service | Port | Status |
 |---------|------|--------|
 | postgres-auth | 6438 | ✅ Ready |
-| postgres-menu | 6433 | ✅ Ready |
+| postgres-product | 6433 | ✅ Ready |
 | postgres-order | 6434 | ✅ Ready |
 | rabbitmq | 6672, 16672 | ✅ Ready |
 | eureka-server | 9761 | ✅ Ready |
@@ -206,7 +206,7 @@ curl -X POST http://localhost:9080/api/auth/login \
 - [x] Service-Auth (hoàn chỉnh với DDD)
 
 **🔨 Đang phát triển:**
-- [ ] Service-Menu
+- [ ] Service-Product
 - [ ] Service-Order
 - [ ] Service-Inventory
 - [ ] Service-Payment
@@ -257,7 +257,7 @@ Duong/
 │   ├── pom.xml
 │   └── README.md
 │
-├── service-menu/               📋 Chưa implement
+├── service-product/               📋 Chưa implement
 ├── service-order/              📋 Chưa implement
 ├── service-inventory/          📋 Chưa implement
 ├── service-payment/            📋 Chưa implement
@@ -403,7 +403,7 @@ Hệ thống đã sẵn sàng cho development:
 4. ✅ Documentation đầy đủ
 5. ✅ Development rules rõ ràng
 
-**Next Step:** Bắt đầu develop Service-Menu theo cùng pattern với Service-Auth!
+**Next Step:** Bắt đầu develop Service-Product theo cùng pattern với Service-Auth!
 
 ---
 

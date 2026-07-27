@@ -32,11 +32,11 @@
 #### Pages (7 files)
 - ✅ `src/pages/LoginPage.jsx` - Admin login
 - ✅ `src/pages/Dashboard.jsx` - Stats & charts
-- ✅ `src/pages/MenuManagement.jsx` - Full CRUD for products (laptop)
+- ✅ `src/pages/ProductManagement.jsx` - Full CRUD for products (laptop)
 - ✅ `src/pages/CategoryManagement.jsx` - Category CRUD
 - ✅ `src/pages/OrderManagement.jsx` - Order management
 - ✅ `src/pages/UserManagement.jsx` - User list
-- ✅ `src/pages/IngredientManagement.jsx` - Quản lý tồn kho
+- ✅ `src/pages/InventoryManagement.jsx` - Quản lý tồn kho
 
 ---
 
@@ -149,12 +149,12 @@ Using **Recharts** library:
 
 ## 🔌 API ENDPOINTS USED
 
-### Menu Service
+### Product Service
 ```javascript
-GET    /api/menu              // Get all menu items
-POST   /api/menu              // Create menu item
-PUT    /api/menu/:id          // Update menu item
-DELETE /api/menu/:id          // Delete menu item
+GET    /api/products              // Get all products
+POST   /api/products              // Create product
+PUT    /api/products/:id          // Update product
+DELETE /api/products/:id          // Delete product
 ```
 
 ### Category Service
@@ -189,7 +189,7 @@ frontend-admin/
 │   │   └── AuthContext.jsx         # Admin authentication
 │   ├── pages/
 │   │   ├── Dashboard.jsx           # Stats & charts ⭐
-│   │   ├── MenuManagement.jsx      # CRUD menu items ⭐
+│   │   ├── ProductManagement.jsx      # CRUD products ⭐
 │   │   ├── CategoryManagement.jsx  # CRUD categories ⭐
 │   │   ├── OrderManagement.jsx     # Manage orders ⭐
 │   │   ├── UserManagement.jsx      # View users
@@ -215,7 +215,7 @@ frontend-admin/
 - [x] Bar chart for weekly orders
 - [x] Line chart for revenue
 - [x] Recent orders table
-- [x] Full CRUD for menu items
+- [x] Full CRUD for products
 - [x] Full CRUD for categories
 - [x] Order list with filtering
 - [x] Order status updates
@@ -276,10 +276,10 @@ npm run dev
 
 ## 💡 USAGE TIPS
 
-1. **Create Categories First** - Before adding menu items
+1. **Create Categories First** - Before adding products
 2. **Check Dashboard Daily** - Monitor orders & revenue
 3. **Update Order Status** - Keep customers informed
-4. **Manage Menu Items** - Keep items up-to-date
+4. **Manage Products** - Keep items up-to-date
 5. **Monitor Analytics** - Use charts for insights
 
 ---
@@ -289,7 +289,7 @@ npm run dev
 You now have a **COMPLETE ADMIN PANEL** with:
 
 ✅ **Premium UI/UX** - Modern, professional design  
-✅ **Full CRUD Operations** - Menu & Categories  
+✅ **Full CRUD Operations** - Products & Categories  
 ✅ **Order Management** - Complete workflow  
 ✅ **Analytics Dashboard** - Charts & statistics  
 ✅ **Responsive Design** - Works everywhere  
@@ -335,7 +335,7 @@ A **COMPLETE FULL-STACK MICROSERVICES SYSTEM** with:
 **Admin Panel (100%):**
 - 17 React files
 - Dashboard analytics
-- Menu management
+- Product management
 - Order management
 - Category management
 

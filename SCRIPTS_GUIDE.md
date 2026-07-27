@@ -60,7 +60,7 @@ view-logs.bat
 Chọn service cần xem logs:
 - API Gateway
 - Service Auth
-- Service Menu
+- Product Service
 - Service Order
 - Service Inventory
 - Hoặc tất cả
@@ -75,7 +75,7 @@ Chọn service cần xem logs:
 - 🌍 Eureka Server: http://localhost:9761
 - 🚪 API Gateway: http://localhost:9080
 - 🔐 Service Auth: http://localhost:9081
-- 🍔 Service Menu: http://localhost:9082
+- 🍔 Product Service: http://localhost:9082
 - 📦 Service Order: http://localhost:9083
 - 📊 Service Inventory: http://localhost:9085
 - 💳 Service Payment: http://localhost:9084
@@ -87,7 +87,7 @@ Chọn service cần xem logs:
 
 ### **Swagger UI:**
 - Auth: http://localhost:9081/swagger-ui.html
-- Menu: http://localhost:9082/swagger-ui.html
+- Product: http://localhost:9082/swagger-ui.html
 - Order: http://localhost:9083/swagger-ui.html
 - Inventory: http://localhost:9085/swagger-ui.html
 

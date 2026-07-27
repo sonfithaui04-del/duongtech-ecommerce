@@ -21,7 +21,7 @@ mvn spring-boot:run
 | Client Request | Target Service | Internal Path |
 |----------------|----------------|---------------|
 | `/api/auth/**` | service-auth | `/**` |
-| `/api/menu/**` | service-menu | `/**` |
+| `/api/products/**` | service-product | `/**` |
 | `/api/orders/**` | service-order | `/**` |
 | `/api/inventory/**` | service-inventory | `/**` |
 | `/api/payments/**` | service-payment | `/**` |
@@ -57,8 +57,8 @@ Gateway cần Eureka Server chạy tại: http://localhost:9761
 # Auth - Register
 POST http://localhost:9080/api/auth/register
 
-# Menu - Get all items
-GET http://localhost:9080/api/menu/items
+# Product - Get all items
+GET http://localhost:9080/api/products
 
 # Orders - Create order
 POST http://localhost:9080/api/orders/create

@@ -43,13 +43,13 @@ Dưới đây là bảng chi tiết các Test Case API điển hình được s�
 
 ---
 
-## 3. Menu Service
+## 3. Product Service
 
-| Test Case | API Get Menu (Xem danh mục sản phẩm) |
+| Test Case | API Get Products (Xem danh mục sản phẩm) |
 | :--- | :--- |
 | **Mục đích** | Lấy danh sách sản phẩm hiển thị cho khách hàng (Public API). |
 | **Method** | `GET` |
-| **URL** | `http://localhost:9080/api/menu` |
+| **URL** | `http://localhost:9080/api/products` |
 | **Headers** | _None_ |
 | **Body** | _None_ |
 | **Expected Result** | **HTTP 200 OK** |

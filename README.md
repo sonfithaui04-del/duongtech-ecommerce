@@ -22,6 +22,7 @@
 - **Đặt hàng** và thanh toán **COD** hoặc **chuyển khoản QR (SePay)**.
 - **Đánh giá** sản phẩm.
 - Thông báo realtime (WebSocket/STOMP) khi trạng thái đơn hàng thay đổi.
+- **Trợ lý AI** (Google Gemini) tư vấn và gợi ý sản phẩm phù hợp, trả kèm ảnh và giá.
 
 ### 🎛️ Trang quản trị (Admin Panel)
 - **Tổng quan (Dashboard):** thống kê đơn hàng, doanh thu, người dùng, biểu đồ (Recharts).
@@ -42,11 +43,12 @@
 | **Eureka Server** | 9761 | Service Discovery |
 | **API Gateway** | 9080 | Routing, CORS, điểm vào duy nhất |
 | **service-auth** | 9081 | Authentication & Authorization (JWT) |
-| **service-menu** | 9082 | Quản lý sản phẩm & danh mục |
+| **service-product** | 9082 | Quản lý sản phẩm & danh mục |
 | **service-order** | 9083 | Quản lý đơn hàng |
 | **service-payment** | 9084 | Thanh toán (COD / SePay QR) |
 | **service-inventory** | 9085 | Quản lý tồn kho |
 | **service-notification** | 9086 | Thông báo (email/log) |
+| **service-ai** | 9087 | Chatbot AI tư vấn sản phẩm (Google Gemini) |
 | **service-socket** | 9089 | WebSocket realtime |
 | **RabbitMQ** | 6672 / 16672 | Message Broker / Management UI |
 | **PostgreSQL** | 6433–6438 | 6 database (mỗi service một DB) |
@@ -64,10 +66,10 @@ Customer App (3001)  Admin Panel (3003)
          ▼               ▼
         API Gateway (9080)
                 │
-        Eureka Server (9761) ───► service-auth (9081), service-menu (9082),
+        Eureka Server (9761) ───► service-auth (9081), service-product (9082),
                 │                  service-order (9083), service-payment (9084),
              RabbitMQ              service-inventory (9085), service-notification (9086),
-           (6672/16672)           service-socket (9089)
+           (6672/16672)           service-socket (9089), service-ai (9087)
                                           │
                                    PostgreSQL x6 (6433–6438)
 ```
@@ -95,11 +97,25 @@ Customer App (3001)  Admin Panel (3003)
 ### 1. Tải mã nguồn
 ```bash
 git clone <repository-url>
-cd Duong
+cd duongtech-ecommerce
 ```
 
-### 2. Chạy Backend (Docker Compose)
-Toàn bộ backend (Eureka, Gateway, 7 service, RabbitMQ, 6 PostgreSQL) chạy dưới project name `duong`:
+### 2. Tạo file `.env` (bắt buộc nếu muốn dùng chatbot AI)
+
+File `.env` nằm trong `.gitignore` nên **không có sẵn khi clone**. Tạo ở thư mục gốc
+(cùng chỗ `docker-compose.yml`):
+
+```
+GEMINI_API_KEY=<khóa Gemini của bạn>
+GEMINI_MODEL=gemini-3.5-flash-lite
+```
+
+Lấy khóa miễn phí tại https://aistudio.google.com/apikey. Bỏ qua bước này thì mọi thứ
+vẫn chạy, riêng chatbot trả lời *"Chatbot chưa được cấu hình khóa API"*.
+Chi tiết xem [CHATBOT-AI-README.md](CHATBOT-AI-README.md).
+
+### 3. Chạy Backend (Docker Compose)
+Toàn bộ backend (Eureka, Gateway, 8 service, RabbitMQ, 6 PostgreSQL) chạy dưới project name `duong`:
 
 ```bash
 docker compose -p duong up -d --build
@@ -114,7 +130,7 @@ Truy cập kiểm tra:
 - **RabbitMQ Management:** http://localhost:16672 (guest / guest)
 - **Swagger (auth):** http://localhost:9081/swagger-ui.html
 
-### 3. Chạy Frontend
+### 4. Chạy Frontend
 Mở 2 terminal riêng:
 
 ```bash

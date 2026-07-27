@@ -1,7 +1,7 @@
-# Menu Service
+# Product Service
 
 ## 📋 Mô tả
-Service quản lý menu items và categories cho hệ thống DuongTech.
+Service quản lý products và categories cho hệ thống DuongTech.
 
 ## 🔧 Công nghệ
 - Spring Boot 3.2.1
@@ -14,9 +14,9 @@ Service quản lý menu items và categories cho hệ thống DuongTech.
 ## 🏗️ Kiến trúc DDD
 
 ```
-service-menu/
+service-product/
 ├── domain/              # Business Logic Layer
-│   ├── model/          # Entities (Category, MenuItem)
+│   ├── model/          # Entities (Category, Product)
 │   └── repository/     # Repository Interfaces
 ├── application/         # Use Cases Layer
 │   ├── usecase/        # Business use cases
@@ -37,7 +37,7 @@ service-menu/
 
 ### 1. Cấu hình Database
 ```sql
-CREATE DATABASE food_ordering_menu;
+CREATE DATABASE duongtech_product;
 ```
 
 ### 2. Chạy Service
@@ -55,13 +55,13 @@ mvn spring-boot:run
 | GET | `/categories?activeOnly=true` | Lấy active categories |
 | POST | `/categories` | Tạo category mới |
 
-### Menu Items
+### Products
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/menu` | Lấy tất cả menu items |
-| GET | `/menu?availableOnly=true` | Lấy available items |
-| POST | `/menu` | Tạo menu item mới |
+| GET | `/products` | Lấy tất cả products |
+| GET | `/products?availableOnly=true` | Lấy sản phẩm đang bán |
+| POST | `/products` | Tạo sản phẩm mới |
 
 ## 📊 Swagger UI
 http://localhost:9082/swagger-ui.html
@@ -79,9 +79,9 @@ curl -X POST http://localhost:9082/categories \
   }'
 ```
 
-### Create Menu Item
+### Create Product
 ```bash
-curl -X POST http://localhost:9082/menu \
+curl -X POST http://localhost:9082/products \
   -H "Content-Type: application/json" \
   -d '{
     "categoryId": 1,
@@ -92,9 +92,9 @@ curl -X POST http://localhost:9082/menu \
   }'
 ```
 
-### Get All Menu Items
+### Get All Products
 ```bash
-curl http://localhost:9082/menu
+curl http://localhost:9082/products
 ```
 
 ## ⚙️ Configuration
@@ -102,7 +102,7 @@ curl http://localhost:9082/menu
 - **Port**: 9082
 - **Database**: PostgreSQL (localhost:6433)
 - **Eureka Server**: http://localhost:9761/eureka/
-- **Service Name**: service-menu
+- **Service Name**: service-product
 
 ## 📌 Database Schema
 
@@ -115,7 +115,7 @@ curl http://localhost:9082/menu
 - created_at
 - updated_at
 
-### menu_items
+### products
 - id (PK)
 - category_id (FK)
 - name
