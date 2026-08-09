@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { orderService } from '../services/orderService'
+import { subscribeOrderChat } from '../services/socketService'
 
 import { Package, Clock, MapPin, Phone, ChevronRight, ShoppingBag, CheckCircle, Truck, XCircle, AlertCircle, QrCode, X, Copy, Check, MessageSquare } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -21,6 +22,44 @@ export default function MyOrdersPage() {
   const [paidOrderId, setPaidOrderId] = useState(null)
   const [cancelOrderId, setCancelOrderId] = useState(null)
   const [activeChatOrderId, setActiveChatOrderId] = useState(null)
+  // orderId -> số tin nhắn chưa đọc từ phía shop
+  const [unreadChat, setUnreadChat] = useState({})
+  // Dùng ref để callback của WebSocket luôn đọc được đơn đang mở mới nhất
+  const activeChatRef = useRef(null)
+
+  useEffect(() => {
+    activeChatRef.current = activeChatOrderId
+  }, [activeChatOrderId])
+
+  // Các trạng thái đơn còn được phép nhắn tin (khớp với điều kiện hiện nút chat)
+  const CHATTABLE_STATUSES = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'DELIVERING']
+
+  const openChat = (orderId) => {
+    setActiveChatOrderId(orderId)
+    setUnreadChat(prev => ({ ...prev, [orderId]: 0 }))
+  }
+
+  // Nghe tin nhắn của TẤT CẢ đơn đang hoạt động, không đợi khách mở khung chat.
+  // Nhờ vậy shop trả lời lúc khung chat đang đóng thì vẫn có chấm đỏ báo.
+  useEffect(() => {
+    if (!user || orders.length === 0) return
+
+    const myId = String(user.userId || user.id)
+
+    const unsubscribers = orders
+      .filter(o => CHATTABLE_STATUSES.includes(o.status))
+      .map(o => subscribeOrderChat(o.id, (event) => {
+        // Tin của chính mình thì bỏ qua
+        if (String(event.senderId) === myId) return
+        // Đang mở đúng đơn đó thì coi như đã đọc
+        if (String(activeChatRef.current) === String(o.id)) return
+
+        setUnreadChat(prev => ({ ...prev, [o.id]: (prev[o.id] || 0) + 1 }))
+        toast(`💬 Shop vừa trả lời đơn #${o.id}`, { duration: 4000 })
+      }))
+
+    return () => unsubscribers.forEach(fn => fn())
+  }, [orders, user])
 
   useEffect(() => {
     if (user) {
@@ -310,12 +349,21 @@ export default function MyOrdersPage() {
                         {/* Action Buttons */}
                         <div className="flex flex-wrap gap-3 ml-auto">
                           {/* Chat Button - Show for all active orders */}
-                          {['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'DELIVERING'].includes(order.status) && (
+                          {CHATTABLE_STATUSES.includes(order.status) && (
                             <button
-                              onClick={() => setActiveChatOrderId(order.id)}
-                              className="px-4 py-2 bg-white/5 text-slate-200 border border-white/10 rounded-lg text-xs font-bold hover:bg-white/10 hover:border-cyan-400/40 transition-all flex items-center gap-2"
+                              onClick={() => openChat(order.id)}
+                              className={`relative px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
+                                unreadChat[order.id] > 0
+                                  ? 'bg-cyan-400/10 text-cyan-200 border border-cyan-400/50 hover:bg-cyan-400/20'
+                                  : 'bg-white/5 text-slate-200 border border-white/10 hover:bg-white/10 hover:border-cyan-400/40'
+                              }`}
                             >
                               <MessageSquare size={16} className="text-cyan-400" /> Nhắn tin hỗ trợ
+                              {unreadChat[order.id] > 0 && (
+                                <span className="absolute -top-2 -right-2 min-w-[20px] h-5 px-1 bg-red-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow">
+                                  {unreadChat[order.id]}
+                                </span>
+                              )}
                             </button>
                           )}
 
