@@ -10,6 +10,7 @@ import {
 export default function InventoryManagement() {
   const { getToken } = useAuth()
   const [inventoryItems, setInventoryItems] = useState([])
+  const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingInventoryItem, setEditingInventoryItem] = useState(null)
@@ -17,6 +18,7 @@ export default function InventoryManagement() {
   
   const [formData, setFormData] = useState({
     name: '',
+    productId: '',
     unit: '',
     quantity: '',
     minQuantity: '',
@@ -28,7 +30,23 @@ export default function InventoryManagement() {
 
   useEffect(() => {
     loadInventoryItems()
+    loadProducts()
   }, [])
+
+  // Danh sách sản phẩm đang bán, dùng để gắn mặt hàng kho với sản phẩm
+  const loadProducts = async () => {
+    try {
+      const token = getToken()
+      const response = await axios.get('/api/products', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = response.data
+      setProducts(Array.isArray(data) ? data : (data?.content || []))
+    } catch (error) {
+      console.error('Failed to load products:', error)
+      setProducts([])
+    }
+  }
 
   const loadInventoryItems = async () => {
     try {
@@ -53,6 +71,7 @@ export default function InventoryManagement() {
       const token = getToken()
       const payload = {
         ...formData,
+        productId: formData.productId ? parseInt(formData.productId, 10) : null,
         quantity: parseFloat(formData.quantity),
         minQuantity: formData.minQuantity ? parseFloat(formData.minQuantity) : null,
         costPerUnit: formData.costPerUnit ? parseFloat(formData.costPerUnit) : null,
@@ -96,6 +115,7 @@ export default function InventoryManagement() {
     setEditingInventoryItem(inventoryItem)
     setFormData({
       name: inventoryItem.name,
+      productId: inventoryItem.productId ?? '',
       unit: inventoryItem.unit,
       quantity: inventoryItem.quantity,
       minQuantity: inventoryItem.minQuantity || '',
@@ -112,6 +132,7 @@ export default function InventoryManagement() {
     setEditingInventoryItem(null)
     setFormData({
       name: '',
+      productId: '',
       unit: '',
       quantity: '',
       minQuantity: '',
@@ -181,6 +202,7 @@ export default function InventoryManagement() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên hàng</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản phẩm gắn kèm</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tồn kho</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đơn giá</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
@@ -200,6 +222,15 @@ export default function InventoryManagement() {
                         <div className="text-xs text-gray-500">{inventoryItem.unit}</div>
                       </div>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {inventoryItem.productId ? (
+                      <span className="px-2 py-1 inline-flex text-xs font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                        {products.find(p => p.id === inventoryItem.productId)?.name || `#${inventoryItem.productId}`}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400">Vật tư kho</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-col">
@@ -280,6 +311,24 @@ export default function InventoryManagement() {
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                     placeholder="Ví dụ: Asus ROG Strix G16"
                   />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Sản phẩm tương ứng</label>
+                  <select
+                    name="productId"
+                    value={formData.productId}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                  >
+                    <option value="">— Không gắn (vật tư kho) —</option>
+                    {products.map(p => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Gắn với sản phẩm để hệ thống tự trừ kho khi xác nhận đơn và hoàn kho khi hủy đơn.
+                  </p>
                 </div>
 
                 <div>
