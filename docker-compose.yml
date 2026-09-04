@@ -3,6 +3,7 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: duong-rabbitmq
+    restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -25,6 +26,7 @@ services:
       context: ./eureka-server
       dockerfile: Dockerfile
     container_name: duong-eureka-server
+    restart: unless-stopped
     ports:
       - "9761:8761"
     networks:
@@ -36,6 +38,7 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile
     container_name: duong-api-gateway
+    restart: unless-stopped
     ports:
       - "9080:8080"
     environment:
@@ -49,6 +52,7 @@ services:
   postgres-auth:
     image: postgres:15-alpine
     container_name: duong-postgres-auth
+    restart: unless-stopped
     environment:
       POSTGRES_DB: duongtech_auth
       POSTGRES_USER: postgres
@@ -70,6 +74,7 @@ services:
       context: ./service-auth
       dockerfile: Dockerfile
     container_name: duong-service-auth
+    restart: unless-stopped
     ports:
       - "9081:8081"
     environment:
@@ -89,6 +94,7 @@ services:
   postgres-product:
     image: postgres:15-alpine
     container_name: duong-postgres-product
+    restart: unless-stopped
     environment:
       POSTGRES_DB: duongtech_product
       POSTGRES_USER: postgres
@@ -105,6 +111,7 @@ services:
       context: ./service-product
       dockerfile: Dockerfile
     container_name: duong-service-product
+    restart: unless-stopped
     ports:
       - "9082:8082"
     environment:
@@ -122,6 +129,7 @@ services:
   postgres-order:
     image: postgres:15-alpine
     container_name: duong-postgres-order
+    restart: unless-stopped
     environment:
       POSTGRES_DB: duongtech_order
       POSTGRES_USER: postgres
@@ -138,6 +146,7 @@ services:
       context: ./service-order
       dockerfile: Dockerfile
     container_name: duong-service-order
+    restart: unless-stopped
     ports:
       - "9083:8083"
     environment:
@@ -149,9 +158,12 @@ services:
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      - postgres-order
-      - rabbitmq
-      - eureka-server
+      postgres-order:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     networks:
       - duongtech-network
 
@@ -159,6 +171,7 @@ services:
   postgres-payment:
     image: postgres:15-alpine
     container_name: duong-postgres-payment
+    restart: unless-stopped
     environment:
       POSTGRES_DB: duongtech_payment
       POSTGRES_USER: postgres
@@ -175,6 +188,7 @@ services:
       context: ./service-payment
       dockerfile: Dockerfile
     container_name: duong-service-payment
+    restart: unless-stopped
     ports:
       - "9084:8084"
     environment:
@@ -195,6 +209,7 @@ services:
   postgres-inventory:
     image: postgres:15-alpine
     container_name: duong-postgres-inventory
+    restart: unless-stopped
     environment:
       POSTGRES_DB: duongtech_inventory
       POSTGRES_USER: postgres
@@ -211,6 +226,7 @@ services:
       context: ./service-inventory
       dockerfile: Dockerfile
     container_name: duong-service-inventory
+    restart: unless-stopped
     ports:
       - "9085:8085"
     environment:
@@ -222,9 +238,12 @@ services:
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      - postgres-inventory
-      - rabbitmq
-      - eureka-server
+      postgres-inventory:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     networks:
       - duongtech-network
 
@@ -232,6 +251,7 @@ services:
   postgres-notification:
     image: postgres:15-alpine
     container_name: duong-postgres-notification
+    restart: unless-stopped
     environment:
       POSTGRES_DB: duongtech_notification
       POSTGRES_USER: postgres
@@ -246,14 +266,17 @@ services:
   service-socket:
     build: ./service-socket
     container_name: duong-service-socket
+    restart: unless-stopped
     ports:
       - "9089:8089"
     environment:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
-      - eureka-server
-      - rabbitmq
+      eureka-server:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     networks:
       - duongtech-network
 
@@ -262,6 +285,7 @@ services:
       context: ./service-notification
       dockerfile: Dockerfile
     container_name: duong-service-notification
+    restart: unless-stopped
     ports:
       - "9086:8086"
     environment:
@@ -273,9 +297,12 @@ services:
       SPRING_RABBITMQ_PASSWORD: guest
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      - postgres-notification
-      - rabbitmq
-      - eureka-server
+      postgres-notification:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
     networks:
       - duongtech-network
 
@@ -285,6 +312,7 @@ services:
       context: ./service-ai
       dockerfile: Dockerfile
     container_name: duong-service-ai
+    restart: unless-stopped
     ports:
       - "9087:8087"
     environment:
