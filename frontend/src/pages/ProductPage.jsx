@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { useCart } from '../context/CartContext'
 import { useCompare } from '../context/CompareContext'
@@ -19,10 +20,13 @@ function getPageNumbers(current, total) {
 }
 
 export default function ProductPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState('ALL')
+  // Danh mục lấy từ URL (?category=id) để link từ chân trang lọc đúng loại
+  const categoryParam = searchParams.get('category')
+  const [selectedCategory, setSelectedCategory] = useState(categoryParam ? Number(categoryParam) : 'ALL')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedItemForModal, setSelectedItemForModal] = useState(null)
   const [page, setPage] = useState(1)
@@ -31,6 +35,19 @@ export default function ProductPage() {
 
   // Reset về trang 1 khi đổi danh mục / tìm kiếm
   useEffect(() => { setPage(1) }, [selectedCategory, searchTerm])
+
+  // Đồng bộ hai chiều giữa URL và bộ lọc danh mục
+  useEffect(() => {
+    setSelectedCategory(categoryParam ? Number(categoryParam) : 'ALL')
+  }, [categoryParam])
+
+  const changeCategory = (value) => {
+    setSelectedCategory(value)
+    const next = new URLSearchParams(searchParams)
+    if (value === 'ALL') next.delete('category')
+    else next.set('category', value)
+    setSearchParams(next, { replace: true })
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,7 +127,7 @@ export default function ProductPage() {
               </div>
               <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1">
                 <button
-                  onClick={() => setSelectedCategory('ALL')}
+                  onClick={() => changeCategory('ALL')}
                   className={`px-4 py-2.5 rounded-xl font-medium text-sm text-left transition-all duration-300 whitespace-nowrap lg:w-full ${
                     selectedCategory === 'ALL'
                       ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/30'
@@ -122,7 +139,7 @@ export default function ProductPage() {
                 {categories.map(cat => (
                   <button
                     key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
+                    onClick={() => changeCategory(cat.id)}
                     className={`px-4 py-2.5 rounded-xl font-medium text-sm text-left transition-all duration-300 whitespace-nowrap lg:w-full ${
                       selectedCategory === cat.id
                         ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/30'

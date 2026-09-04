@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-import { MapPin, Phone, CreditCard, CheckCircle, Loader, ArrowLeft, QrCode, X, Copy, Check, PartyPopper } from 'lucide-react'
+import { MapPin, Phone, User, CreditCard, CheckCircle, Loader, ArrowLeft, QrCode, X, Copy, Check, PartyPopper } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function CheckoutPage() {
@@ -18,15 +18,15 @@ export default function CheckoutPage() {
   const [copied, setCopied] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [formData, setFormData] = useState({
+    name: '',
     address: '',
     phone: '',
     note: ''
   })
-  const [pointsToUse, setPointsToUse] = useState(0)
+
 
   // Custom total after applying points. 1 point = 1000 VND
-  const discountAmount = pointsToUse * 1000
-  const finalTotal = Math.max(0, total - discountAmount)
+  const finalTotal = total
 
   // Listen for PAYMENT_SUCCESS notification from WebSocket
   useEffect(() => {
@@ -52,6 +52,12 @@ export default function CheckoutPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    // Bắt buộc nhập tên người nhận
+    if (!formData.name.trim()) {
+      toast.error('Vui lòng nhập tên người nhận')
+      return
+    }
+
     // Validate Phone (10-11 digits)
     const phoneRegex = /^[0-9]{10,11}$/
     if (!phoneRegex.test(formData.phone)) {
@@ -66,7 +72,7 @@ export default function CheckoutPage() {
       const orderData = {
         userId: user?.userId,
         email: user?.email,
-        customerName: user?.fullName || user?.email || 'Khách hàng',
+        customerName: formData.name.trim() || user?.fullName || user?.email || 'Khách hàng',
         items: cart.map(item => ({
           productId: item.id,
           productName: item.name,
@@ -78,7 +84,7 @@ export default function CheckoutPage() {
         phoneNumber: formData.phone,
         notes: formData.note,
         paymentMethod: paymentMethod,
-        pointsToUse: pointsToUse
+        pointsToUse: 0
       }
 
       // Tạo order trước
@@ -163,6 +169,21 @@ export default function CheckoutPage() {
                 </div>
 
                 <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Tên người nhận</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className={inputClass}
+                        placeholder="VD: Nguyễn Tùng Dương"
+                      />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">Địa chỉ đầy đủ</label>
                     <div className="relative">
@@ -264,49 +285,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Loyalty Points Section */}
-              <div className="bg-slate-900 p-8 rounded-2xl border border-white/10 mt-8">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-center text-yellow-400">
-                    <CheckCircle size={24} />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">Điểm thưởng (Loyalty Points)</h2>
-                    <p className="text-slate-400">Bạn đang có <strong className="text-yellow-400">{user?.loyaltyPoints || 0}</strong> điểm</p>
-                  </div>
-                </div>
-
-                {(!user || (user.loyaltyPoints || 0) === 0) ? (
-                   <p className="text-sm text-slate-500 italic">Bạn chưa gắn kết đủ để có điểm thưởng hoặc cần phải tải lại trang để thấy điểm mới.</p>
-                ) : (
-                   <div>
-                     <label className="block text-sm font-medium text-slate-300 mb-2">Số điểm muốn dùng (1 điểm = 1.000đ)</label>
-                     <div className="flex gap-4 items-center">
-                       <input
-                         type="number"
-                         min="0"
-                         max={Math.min(user?.loyaltyPoints || 0, Math.ceil(total / 1000))}
-                         value={pointsToUse}
-                         onChange={(e) => setPointsToUse(Math.min(parseInt(e.target.value) || 0, user?.loyaltyPoints || 0, Math.ceil(total / 1000)))}
-                         className="flex-1 px-4 py-3 bg-slate-950 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all outline-none"
-                         placeholder="Nhập số điểm..."
-                       />
-                       <button
-                         type="button"
-                         onClick={() => setPointsToUse(Math.min(user?.loyaltyPoints || 0, Math.ceil(total / 1000)))}
-                         className="px-6 py-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 font-bold rounded-xl hover:bg-yellow-500/20 transition-colors"
-                       >
-                         Dùng tối đa
-                       </button>
-                     </div>
-                     {pointsToUse > 0 && (
-                        <p className="text-sm text-green-400 font-medium mt-2">
-                          Bạn sẽ được giảm <strong className="text-lg">{(pointsToUse * 1000).toLocaleString('vi-VN')}đ</strong>
-                        </p>
-                     )}
-                   </div>
-                )}
-              </div>
             </div>
 
             {/* Order Summary Sidebar */}
@@ -348,12 +326,6 @@ export default function CheckoutPage() {
                     <span>Phí giao hàng</span>
                     <span className="text-green-400">Miễn phí</span>
                   </div>
-                  {discountAmount > 0 && (
-                    <div className="flex justify-between text-green-400 font-medium">
-                      <span>Dùng điểm thưởng (-{pointsToUse}d)</span>
-                      <span>-{discountAmount.toLocaleString('vi-VN')}đ</span>
-                    </div>
-                  )}
                   <div className="flex justify-between text-xl font-bold text-white pt-2 border-t border-white/10 mt-2">
                     <span>Tổng cộng</span>
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">{finalTotal.toLocaleString('vi-VN')}đ</span>

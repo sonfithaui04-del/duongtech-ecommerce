@@ -1,7 +1,18 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Cpu, Send, ShieldCheck, CreditCard, Truck, Headphones } from 'lucide-react'
 
 export default function Footer() {
+  const [categories, setCategories] = useState([])
+
+  // Lấy danh mục thật để link chân trang lọc đúng loại sản phẩm
+  useEffect(() => {
+    axios.get('/api/categories?activeOnly=true')
+      .then(res => setCategories((res.data || []).slice(0, 5)))
+      .catch(() => setCategories([]))
+  }, [])
+
   const badges = [
     { icon: ShieldCheck, text: 'Bảo hành 24 tháng' },
     { icon: CreditCard, text: 'Trả góp 0%' },
@@ -76,21 +87,22 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <h4 className="text-white font-bold mb-5 text-sm uppercase tracking-wider">Sản phẩm</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Laptop Gaming</Link></li>
-              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Laptop Văn phòng</Link></li>
-              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Laptop Đồ hoạ</Link></li>
-              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Ultrabook</Link></li>
+              {categories.map(cat => (
+                <li key={cat.id}>
+                  <Link to={`/products?category=${cat.id}`} className="hover:text-cyan-400 transition-colors">{cat.name}</Link>
+                </li>
+              ))}
               <li><Link to="/compare" className="hover:text-cyan-400 transition-colors">So sánh cấu hình</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2">
-            <h4 className="text-white font-bold mb-5 text-sm uppercase tracking-wider">Hỗ trợ</h4>
+            <h4 className="text-white font-bold mb-5 text-sm uppercase tracking-wider">Liên kết nhanh</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/" className="hover:text-cyan-400 transition-colors">Chính sách bảo hành</Link></li>
-              <li><Link to="/" className="hover:text-cyan-400 transition-colors">Hướng dẫn trả góp</Link></li>
-              <li><Link to="/" className="hover:text-cyan-400 transition-colors">Vận chuyển</Link></li>
-              <li><Link to="/" className="hover:text-cyan-400 transition-colors">Câu hỏi thường gặp</Link></li>
+              <li><Link to="/" className="hover:text-cyan-400 transition-colors">Trang chủ</Link></li>
+              <li><Link to="/products" className="hover:text-cyan-400 transition-colors">Tất cả sản phẩm</Link></li>
+              <li><Link to="/cart" className="hover:text-cyan-400 transition-colors">Giỏ hàng</Link></li>
+              <li><Link to="/my-orders" className="hover:text-cyan-400 transition-colors">Đơn hàng của tôi</Link></li>
             </ul>
           </div>
 
@@ -111,9 +123,9 @@ export default function Footer() {
         <div className="container mx-auto px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <p>&copy; {new Date().getFullYear()} DuongTech. Đã đăng ký bản quyền.</p>
           <div className="flex gap-5">
-            <Link to="/" className="hover:text-cyan-400 transition-colors">Điều khoản</Link>
-            <Link to="/" className="hover:text-cyan-400 transition-colors">Bảo mật</Link>
-            <Link to="/" className="hover:text-cyan-400 transition-colors">Cookie</Link>
+            <Link to="/products" className="hover:text-cyan-400 transition-colors">Sản phẩm</Link>
+            <Link to="/compare" className="hover:text-cyan-400 transition-colors">So sánh</Link>
+            <Link to="/my-orders" className="hover:text-cyan-400 transition-colors">Đơn hàng</Link>
           </div>
         </div>
       </div>

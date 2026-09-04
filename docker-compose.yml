@@ -196,9 +196,10 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SEPAY_BANK_ACCOUNT_NUMBER: "YOUR_ACCOUNT_NUMBER"
-      SEPAY_BANK_CODE: "YOUR_BANK_CODE"
-      SEPAY_ACCOUNT_NAME: "YOUR_ACCOUNT_NAME"
+      # Thông tin tài khoản nhận tiền, khai trong file .env (không đưa lên GitHub)
+      SEPAY_BANK_ACCOUNT_NUMBER: ${SEPAY_BANK_ACCOUNT_NUMBER:-}
+      SEPAY_BANK_CODE: ${SEPAY_BANK_CODE:-MBBank}
+      SEPAY_ACCOUNT_NAME: ${SEPAY_ACCOUNT_NAME:-}
     depends_on:
       - postgres-payment
       - eureka-server
