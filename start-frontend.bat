@@ -20,7 +20,7 @@ if not exist "frontend-admin\node_modules" (
 )
 
 echo.
-echo Starting Customer App (Port 3000)...
+echo Starting Customer App (Port 3001)...
 start "Customer App" cmd /k "cd frontend && npm run dev"
 
 echo.
@@ -28,7 +28,7 @@ echo Waiting 5 seconds before starting Admin Panel...
 timeout /t 5 /nobreak
 
 echo.
-echo Starting Admin Panel (Port 3002)...
+echo Starting Admin Panel (Port 3003)...
 start "Admin Panel" cmd /k "cd frontend-admin && npm run dev"
 
 echo.
@@ -36,8 +36,8 @@ echo ========================================
 echo   Frontend Applications Started!
 echo ========================================
 echo.
-echo  Customer App:  http://localhost:3000
-echo  Admin Panel:   http://localhost:3002
+echo  Customer App:  http://localhost:3001
+echo  Admin Panel:   http://localhost:3003
 echo.
 echo Two new CMD windows have been opened.
 echo Close those windows to stop the frontend apps.
