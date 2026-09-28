@@ -47,4 +47,14 @@ public class OrderRepositoryImpl implements OrderRepository {
     public void deleteById(Long id) {
         jpaRepository.deleteById(id);
     }
+
+    @Override
+    public java.util.Map<Long, Long> countSoldQuantityByProduct() {
+        java.util.Map<Long, Long> ketQua = new java.util.LinkedHashMap<>();
+        for (Object[] dong : jpaRepository.sumSoldQuantityByProduct()) {
+            if (dong == null || dong.length < 2 || dong[0] == null) continue;
+            ketQua.put(((Number) dong[0]).longValue(), ((Number) dong[1]).longValue());
+        }
+        return ketQua;
+    }
 }

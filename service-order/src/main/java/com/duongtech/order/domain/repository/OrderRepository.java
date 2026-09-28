@@ -3,6 +3,7 @@ package com.duongtech.order.domain.repository;
 import com.duongtech.order.domain.model.Order;
 import com.duongtech.order.domain.model.OrderStatus;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface OrderRepository {
@@ -13,4 +14,7 @@ public interface OrderRepository {
     List<Order> findByShipperId(Long shipperId);
     Order save(Order order);
     void deleteById(Long id);
+
+    /** Số lượng đã bán của từng sản phẩm: khoá là mã sản phẩm, giá trị là tổng số lượng. */
+    Map<Long, Long> countSoldQuantityByProduct();
 }

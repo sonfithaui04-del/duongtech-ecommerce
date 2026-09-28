@@ -45,6 +45,18 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
+    @GetMapping("/best-sellers")
+    @Operation(summary = "Số lượng đã bán của từng sản phẩm (dùng cho sắp xếp Mua nhiều nhất)")
+    public ResponseEntity<Map<String, Long>> getBestSellers() {
+        Map<Long, Long> daBan = orderRepository.countSoldQuantityByProduct();
+        log.info("[ORDER-CONTROLLER] Best sellers: {} sản phẩm đã phát sinh doanh số", daBan.size());
+
+        // Trả về khoá dạng chuỗi cho JSON, giữ nguyên thứ tự bán chạy giảm dần
+        Map<String, Long> ketQua = new java.util.LinkedHashMap<>();
+        daBan.forEach((productId, soLuong) -> ketQua.put(String.valueOf(productId), soLuong));
+        return ResponseEntity.ok(ketQua);
+    }
+
     @GetMapping
     @Operation(summary = "Lấy tất cả đơn hàng (Admin)")
     public ResponseEntity<List<OrderDto>> getAllOrders() {

@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { useCart } from '../context/CartContext'
 import { useCompare } from '../context/CompareContext'
-import { Search, ShoppingBag, Star, GitCompare, Laptop, LayoutGrid } from 'lucide-react'
+import { Search, ShoppingBag, Star, GitCompare, Laptop, LayoutGrid, ArrowDownUp } from 'lucide-react'
 import ProductModal from '../components/ProductModal'
 
 const PAGE_SIZE = 16
@@ -30,16 +30,29 @@ export default function ProductPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedItemForModal, setSelectedItemForModal] = useState(null)
   const [page, setPage] = useState(1)
+  // Cách sắp xếp sản phẩm. "featured" (nổi bật) là mặc định.
+  // Lấy từ URL (?sort=...) giống bộ lọc danh mục, để tải lại trang vẫn giữ nguyên lựa chọn.
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'featured')
+  // Số lượng đã bán của từng sản phẩm, lấy từ service-order: { "12": 40, ... }
+  const [soldMap, setSoldMap] = useState({})
   const { addToCart } = useCart()
   const { isComparing, toggleCompare } = useCompare()
 
-  // Reset về trang 1 khi đổi danh mục / tìm kiếm
-  useEffect(() => { setPage(1) }, [selectedCategory, searchTerm])
+  // Reset về trang 1 khi đổi danh mục / tìm kiếm / cách sắp xếp
+  useEffect(() => { setPage(1) }, [selectedCategory, searchTerm, sortBy])
 
   // Đồng bộ hai chiều giữa URL và bộ lọc danh mục
   useEffect(() => {
     setSelectedCategory(categoryParam ? Number(categoryParam) : 'ALL')
   }, [categoryParam])
+
+  const changeSort = (value) => {
+    setSortBy(value)
+    const next = new URLSearchParams(searchParams)
+    if (value === 'featured') next.delete('sort')
+    else next.set('sort', value)
+    setSearchParams(next, { replace: true })
+  }
 
   const changeCategory = (value) => {
     setSelectedCategory(value)
@@ -67,10 +80,30 @@ export default function ProductPage() {
     fetchData()
   }, [])
 
+  // Lấy số lượng đã bán để phục vụ sắp xếp "Mua nhiều nhất".
+  // Gọi riêng vì dữ liệu này nằm ở service-order, không thuộc service-product.
+  useEffect(() => {
+    axios.get('/api/orders/best-sellers')
+      .then(res => setSoldMap(res.data || {}))
+      .catch(() => setSoldMap({}))   // không lấy được thì coi như chưa bán được món nào
+  }, [])
+
+  const soldOf = (item) => Number(soldMap[String(item.id)] || 0)
+
   const filteredItems = products.filter(item => {
     const matchesCategory = selectedCategory === 'ALL' || item.categoryId === selectedCategory
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesCategory && matchesSearch
+  }).sort((a, b) => {
+    if (sortBy === 'price-asc') return (a.price || 0) - (b.price || 0)
+    if (sortBy === 'price-desc') return (b.price || 0) - (a.price || 0)
+    if (sortBy === 'best-selling') return soldOf(b) - soldOf(a)
+    // Nổi bật: ưu tiên điểm đánh giá, sau đó tới lượt mua, cuối cùng theo thứ tự hiển thị
+    const diemChenhLech = (b.averageRating || 0) - (a.averageRating || 0)
+    if (diemChenhLech !== 0) return diemChenhLech
+    const banChenhLech = soldOf(b) - soldOf(a)
+    if (banChenhLech !== 0) return banChenhLech
+    return (a.displayOrder || 0) - (b.displayOrder || 0)
   })
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE))
@@ -156,7 +189,26 @@ export default function ProductPage() {
           {/* Product area */}
           <div className="flex-1">
             {!loading && (
-              <p className="text-sm text-slate-400 mb-4">{filteredItems.length} sản phẩm · Trang <span className="font-bold text-white">{currentPage}</span>/{totalPages}</p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                <p className="text-sm text-slate-400">
+                  {filteredItems.length} sản phẩm · Trang <span className="font-bold text-white">{currentPage}</span>/{totalPages}
+                </p>
+                <div className="flex items-center gap-2">
+                  <ArrowDownUp size={16} className="text-cyan-400 shrink-0" />
+                  <label htmlFor="sap-xep" className="text-sm text-slate-400 whitespace-nowrap">Sắp xếp:</label>
+                  <select
+                    id="sap-xep"
+                    value={sortBy}
+                    onChange={(e) => changeSort(e.target.value)}
+                    className="bg-slate-900 border border-white/10 text-slate-200 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent cursor-pointer"
+                  >
+                    <option value="featured">Nổi bật</option>
+                    <option value="price-asc">Giá: thấp đến cao</option>
+                    <option value="price-desc">Giá: cao đến thấp</option>
+                    <option value="best-selling">Mua nhiều nhất</option>
+                  </select>
+                </div>
+              </div>
             )}
             {loading ? (
               <div className="flex justify-center py-20">
