@@ -129,6 +129,8 @@ public class ProductController {
             dto.setCategoryName(product.getCategory().getName());
         }
         dto.setAvailable(product.getAvailable() != null && product.getAvailable());
+        dto.setAverageRating(product.getAverageRating());
+        dto.setTotalReviews(product.getTotalReviews());
         dto.setCreatedAt(product.getCreatedAt());
         dto.setUpdatedAt(product.getUpdatedAt());
         return dto;

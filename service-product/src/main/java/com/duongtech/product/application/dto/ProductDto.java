@@ -24,6 +24,10 @@ public class ProductDto {
     private String imageUrl;
     private Boolean available;
     private Integer displayOrder;
+    /** Điểm đánh giá trung bình, dùng cho sao hiển thị và cho sắp xếp "Nổi bật" */
+    private Double averageRating;
+    /** Số lượt đánh giá */
+    private Integer totalReviews;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
