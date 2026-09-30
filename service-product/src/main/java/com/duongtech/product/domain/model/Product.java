@@ -34,7 +34,7 @@ public class Product {
     @Column(length = 1000)
     private String description;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal price;
 
     @Column(length = 2000)

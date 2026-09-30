@@ -78,7 +78,7 @@ export default function ComparePage() {
                         <img
                           src={item.imageUrl || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=300&q=80'}
                           alt={item.name}
-                          className="w-full h-28 object-cover rounded-xl mb-3 border border-white/10"
+                          className="w-full h-28 object-contain bg-white rounded-xl mb-3 border border-white/10"
                           onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=300&q=80' }}
                         />
                         <p className="font-bold text-white text-left leading-snug">{item.name}</p>

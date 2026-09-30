@@ -7,15 +7,46 @@ import { useCart } from '../context/CartContext'
 
 export default function HomePage() {
   const [featuredItems, setFeaturedItems] = useState([])
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const { addToCart } = useCart()
+
+  // Ảnh và biểu tượng minh hoạ cho từng danh mục. Tên khớp với tên danh mục trong CSDL;
+  // danh mục nào không có trong bảng này thì dùng dòng cuối làm mặc định.
+  const MINH_HOA = {
+    'Laptop Gaming': { icon: Zap, image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=600&q=80' },
+    'Laptop Văn phòng': { icon: Monitor, image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80' },
+    'Laptop Đồ hoạ': { icon: Cpu, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80' },
+    'Ultrabook': { icon: HardDrive, image: 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=600&q=80' },
+    MAC_DINH: { icon: ShoppingBag, image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80' },
+  }
 
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
         const res = await axios.get('/api/products?availableOnly=true')
-        // Get top 4 items
-        setFeaturedItems(res.data.slice(0, 4))
+        const ds = res.data || []
+
+        // 4 sản phẩm nổi bật, xếp giống mục "Nổi bật" ở trang danh sách sản phẩm:
+        // điểm đánh giá nhân với độ tin cậy (số lượt đánh giá), hoà thì theo thứ tự hiển thị.
+        const diemNoiBat = (sp) => (sp.averageRating || 0) * Math.log10(10 + (sp.totalReviews || 0))
+        const noiBat = [...ds].sort((a, b) => {
+          const chenh = diemNoiBat(b) - diemNoiBat(a)
+          if (chenh !== 0) return chenh
+          return (a.displayOrder || 0) - (b.displayOrder || 0)
+        })
+        setFeaturedItems(noiBat.slice(0, 4))
+
+        // Ô danh mục lấy thẳng từ dữ liệu: tên thật, số sản phẩm thật,
+        // bỏ danh mục đang không có hàng để không dẫn người xem vào trang trống.
+        const dem = new Map()
+        for (const sp of ds) {
+          if (!sp.categoryId) continue
+          const cu = dem.get(sp.categoryId)
+          if (cu) cu.count += 1
+          else dem.set(sp.categoryId, { id: sp.categoryId, name: sp.categoryName || 'Khác', count: 1 })
+        }
+        setCategories([...dem.values()].sort((a, b) => b.count - a.count).slice(0, 4))
       } catch (error) {
         console.error('Failed to fetch menu:', error)
       } finally {
@@ -24,13 +55,6 @@ export default function HomePage() {
     }
     fetchFeatured()
   }, [])
-
-  const categories = [
-    { id: 1, name: 'Laptop Gaming', icon: Zap, image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=600&q=80', count: '12 Sản phẩm' },
-    { id: 2, name: 'Văn phòng', icon: Monitor, image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80', count: '18 Sản phẩm' },
-    { id: 3, name: 'Đồ hoạ', icon: Cpu, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80', count: '9 Sản phẩm' },
-    { id: 4, name: 'Phụ kiện', icon: HardDrive, image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=600&q=80', count: '25 Sản phẩm' },
-  ]
 
   const specs = [
     { icon: Cpu, title: 'Chip thế hệ mới', desc: 'Intel Core Ultra / AMD Ryzen AI' },
@@ -74,17 +98,18 @@ export default function HomePage() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {categories.map((cat) => {
-            const Icon = cat.icon
+            const minhHoa = MINH_HOA[cat.name] || MINH_HOA.MAC_DINH
+            const Icon = minhHoa.icon
             return (
               <Link
                 key={cat.id}
-                to="/products"
+                to={`/products?category=${cat.id}`}
                 className="group relative overflow-hidden rounded-2xl border border-white/10 aspect-[4/5] hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent z-10"></div>
                 <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-blue-600/40 to-transparent transition-opacity duration-300"></div>
                 <img
-                  src={cat.image}
+                  src={minhHoa.image}
                   alt={cat.name}
                   className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-110 transition-all duration-500"
                 />
@@ -94,7 +119,7 @@ export default function HomePage() {
                 <div className="absolute bottom-0 left-0 p-6 z-20">
                   <h3 className="text-xl font-bold text-white mb-1">{cat.name}</h3>
                   <p className="text-sm text-slate-400 group-hover:text-cyan-400 transition-colors flex items-center gap-1">
-                    {cat.count} <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                    {cat.count} sản phẩm <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
                   </p>
                 </div>
               </Link>
@@ -127,18 +152,20 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {featuredItems.map((item) => (
                 <div key={item.id} className="bg-slate-950 rounded-2xl border border-white/10 hover:border-cyan-400/40 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden group">
-                  <div className="relative h-48 overflow-hidden">
+                  {/* Nền trắng + object-contain để không cắt mất dòng cấu hình in ở mép dưới ảnh */}
+                  <div className="relative h-48 overflow-hidden bg-white">
                     <img
                       src={item.imageUrl || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80'}
                       alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
-                    <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-slate-900/80 backdrop-blur border border-white/10 rounded-lg text-xs font-bold text-cyan-400 flex items-center gap-1">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 to-transparent"></div>
+                    {/* Đặt ở góc trên để không đè lên dòng cấu hình in sẵn ở mép dưới ảnh */}
+                    <div className="absolute top-3 left-3 px-2.5 py-1 bg-slate-900/80 backdrop-blur border border-white/10 rounded-lg text-xs font-bold text-cyan-400 flex items-center gap-1">
                       <ShieldCheck size={12} /> Bảo hành 24T
                     </div>
                   </div>

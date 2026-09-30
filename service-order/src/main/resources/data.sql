@@ -11,6 +11,12 @@ ALTER TABLE IF EXISTS order_items ADD COLUMN IF NOT EXISTS product_id bigint;
 ALTER TABLE IF EXISTS order_items ADD COLUMN IF NOT EXISTS product_name varchar(200);
 ALTER TABLE IF EXISTS order_items ADD COLUMN IF NOT EXISTS image_url varchar(2000);
 
+-- 0b) Nới rộng các cột tiền từ numeric(10,2) lên numeric(15,2). Cột cũ chỉ chứa được
+--     tới 99.999.999đ, trong khi một đơn vài chiếc laptop đã vượt mốc đó.
+ALTER TABLE IF EXISTS orders ALTER COLUMN total_amount TYPE numeric(15,2);
+ALTER TABLE IF EXISTS order_items ALTER COLUMN price TYPE numeric(15,2);
+ALTER TABLE IF EXISTS order_items ALTER COLUMN subtotal TYPE numeric(15,2);
+
 -- Chép dữ liệu từ cột cũ sang cột mới (chỉ chạy được trên CSDL cũ, CSDL mới sẽ bỏ qua)
 UPDATE order_items SET product_id = menu_item_id WHERE product_id IS NULL;
 UPDATE order_items SET product_name = menu_item_name WHERE product_name IS NULL;

@@ -17,7 +17,10 @@ ai:
   shop-desc: "cửa hàng laptop và thiết bị công nghệ"
   product-domain: "laptop và thiết bị công nghệ"
   use-product-context: true
-  max-products: 40
+  # Số sản phẩm gửi kèm cho trợ lý ảo. Phải đủ lớn để phủ hết hàng đang bán (187 máy),
+  # nếu không trợ lý chỉ nhìn thấy mấy chục sản phẩm đầu bảng và sẽ trả lời rằng
+  # cửa hàng không có những mẫu nằm ngoài khoảng đó.
+  max-products: 250
 
 # Eureka Client Configuration
 eureka:

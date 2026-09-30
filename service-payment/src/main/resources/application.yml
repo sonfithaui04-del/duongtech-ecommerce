@@ -7,7 +7,12 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres-payment:5432/duongtech_payment}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:10112004}
+  # Chạy classpath:data.sql sau khi Hibernate dựng bảng (chỉ để nới kiểu cột số tiền)
+  sql:
+    init:
+      mode: always
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     show-sql: true

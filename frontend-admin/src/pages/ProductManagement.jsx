@@ -325,14 +325,20 @@ export default function ProductManagement() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Link Ảnh (Tùy chọn)</label>
                 <div className="relative">
                   <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  {/* Để type="text" vì ảnh có thể là đường dẫn trong trang (/products/cps/...)
+                      chứ không chỉ là link đầy đủ; type="url" sẽ chặn không cho lưu. */}
                   <input
-                    type="url"
+                    type="text"
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                     className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                    placeholder="https://example.com/image.jpg"
+                    placeholder="/products/cps/ten-anh.webp hoặc https://..."
                   />
                 </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Ảnh có sẵn nằm trong thư mục <code>frontend/public/products/cps/</code>, nhập theo dạng
+                  <code> /products/cps/ten-tep.webp</code>. Hoặc dán link ảnh đầy đủ bắt đầu bằng https://
+                </p>
               </div>
 
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">

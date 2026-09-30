@@ -31,13 +31,13 @@ public class InventoryItem {
     @Column(length = 50)
     private String unit; // kg, lít, gói, v.v.
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal quantity; // Số lượng tồn kho hiện tại
 
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 15, scale = 2)
     private BigDecimal minQuantity; // Ngưỡng cảnh báo sắp hết
 
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 15, scale = 2)
     private BigDecimal costPerUnit; // Giá nhập/đơn vị
 
     private LocalDate expiryDate; // Ngày hết hạn (optional)

@@ -90,6 +90,11 @@ export default function ProductPage() {
 
   const soldOf = (item) => Number(soldMap[String(item.id)] || 0)
 
+  // Điểm "nổi bật": điểm đánh giá nhân với độ tin cậy (càng nhiều lượt đánh giá càng tin được).
+  // Dùng lô-ga-rít để một sản phẩm nghìn lượt không áp đảo hoàn toàn sản phẩm vài trăm lượt.
+  const diemNoiBat = (item) =>
+    (item.averageRating || 0) * Math.log10(10 + (item.totalReviews || 0))
+
   const filteredItems = products.filter(item => {
     const matchesCategory = selectedCategory === 'ALL' || item.categoryId === selectedCategory
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -98,8 +103,10 @@ export default function ProductPage() {
     if (sortBy === 'price-asc') return (a.price || 0) - (b.price || 0)
     if (sortBy === 'price-desc') return (b.price || 0) - (a.price || 0)
     if (sortBy === 'best-selling') return soldOf(b) - soldOf(a)
-    // Nổi bật: ưu tiên điểm đánh giá, sau đó tới lượt mua, cuối cùng theo thứ tự hiển thị
-    const diemChenhLech = (b.averageRating || 0) - (a.averageRating || 0)
+    // Nổi bật: cân cả điểm đánh giá lẫn số người đã đánh giá, rồi tới lượt mua.
+    // Nếu chỉ xếp theo điểm thì một sản phẩm 5,0 do đúng 5 người chấm sẽ đứng trên
+    // sản phẩm 4,8 do hơn 200 người chấm — không đúng nghĩa "nổi bật".
+    const diemChenhLech = diemNoiBat(b) - diemNoiBat(a)
     if (diemChenhLech !== 0) return diemChenhLech
     const banChenhLech = soldOf(b) - soldOf(a)
     if (banChenhLech !== 0) return banChenhLech
@@ -226,18 +233,20 @@ export default function ProductPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {displayed.map((item) => (
                   <div key={item.id} className="bg-slate-900 rounded-2xl border border-white/10 hover:border-cyan-400/40 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1 transition-all duration-300 group overflow-hidden">
-                    <div className="relative h-56 overflow-hidden cursor-pointer" onClick={() => setSelectedItemForModal(item)}>
+                    {/* Nền trắng + object-contain: ảnh sản phẩm có in sẵn dòng cấu hình ở mép dưới,
+                        dùng object-cover sẽ cắt mất dòng đó. */}
+                    <div className="relative h-56 overflow-hidden cursor-pointer bg-white" onClick={() => setSelectedItemForModal(item)}>
                       <img
                         src={item.imageUrl || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80'}
                         alt={item.name}
                         loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80';
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/10 to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 via-transparent to-transparent"></div>
                       <div className="absolute inset-0 bg-gradient-to-t from-blue-600/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
                         <span className="text-white font-bold tracking-wider opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Xem chi tiết</span>
                       </div>

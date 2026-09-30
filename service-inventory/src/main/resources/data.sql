@@ -1,36 +1,219 @@
 -- =====================================================================
--- DuongTech · service-inventory · seed data (auto-loaded by Spring Boot)
--- Kho gồm 2 nhóm:
---   (1) 6 mặt hàng laptop đang bán  -> có product_id, được trừ/hoàn tự động theo đơn hàng
---   (2) 6 linh kiện, phụ kiện       -> product_id NULL, chỉ theo dõi vật tư trong kho
--- SQL thuần (không dollar-quoting / PL-pgSQL). Idempotent bằng WHERE NOT EXISTS (...).
+-- DuongTech · service-inventory · dữ liệu mẫu
+-- (1) 179 mặt hàng đang bán -> product_id khớp đúng bên service-product,
+--     trừ kho khi đơn được xác nhận và hoàn lại khi đơn bị huỷ.
+-- (2) 6 vật tư đóng gói -> product_id NULL, chỉ theo dõi trong kho.
+-- Số tồn là số giả lập (trang nguồn không công khai tồn kho), cố định qua mỗi lần chạy.
 -- =====================================================================
 
--- (1) Tồn kho của các laptop đang bán.
--- product_id trỏ tới sản phẩm bên service-product: khi đơn hàng được xác nhận,
--- service-order gọi /inventory/deduct để trừ kho; khi hủy đơn thì gọi /inventory/restore.
-INSERT INTO inventory_items (name, product_id, unit, quantity, min_quantity, cost_per_unit, expiry_date, description, active, created_at, updated_at)
-SELECT * FROM (VALUES
-  ('Acer Nitro 5',        1, 'chiếc', 12, 3, 19500000, NULL::date, 'Tồn kho laptop gaming Acer Nitro 5.',       true, NOW(), NOW()),
-  ('MSI Katana 15',       2, 'chiếc', 10, 3, 21000000, NULL,       'Tồn kho laptop gaming MSI Katana 15.',      true, NOW(), NOW()),
-  ('Asus ROG Strix G16',  3, 'chiếc',  6, 2, 28500000, NULL,       'Tồn kho laptop gaming Asus ROG Strix G16.', true, NOW(), NOW()),
-  ('Lenovo ThinkPad E14', 4, 'chiếc', 15, 4, 15000000, NULL,       'Tồn kho laptop văn phòng ThinkPad E14.',    true, NOW(), NOW()),
-  ('HP Pavilion 14',      5, 'chiếc', 18, 5, 12300000, NULL,       'Tồn kho laptop văn phòng HP Pavilion 14.',  true, NOW(), NOW()),
-  ('Dell Inspiron 15',    6, 'chiếc', 16, 4, 13200000, NULL,       'Tồn kho laptop văn phòng Dell Inspiron 15.',true, NOW(), NOW())
-) AS t(name, product_id, unit, quantity, min_quantity, cost_per_unit, expiry_date, description, active, created_at, updated_at)
+-- (0a) Nới rộng các cột số tiền/số lượng từ numeric(10,2) lên numeric(15,2):
+--      giá nhập một chiếc laptop cao cấp đã vượt mốc 99.999.999đ của cột cũ.
+ALTER TABLE IF EXISTS inventory_items ALTER COLUMN quantity TYPE numeric(15,2);
+ALTER TABLE IF EXISTS inventory_items ALTER COLUMN min_quantity TYPE numeric(15,2);
+ALTER TABLE IF EXISTS inventory_items ALTER COLUMN cost_per_unit TYPE numeric(15,2);
+
+-- (0b) Dọn tồn kho của bộ sản phẩm mẫu cũ (chỉ gắn với product_id 1..6).
+DELETE FROM inventory_items
+WHERE product_id IS NOT NULL
+  AND (SELECT COALESCE(MAX(product_id), 0) FROM inventory_items) < 100;
+
+-- (1) Tồn kho của các laptop đang bán
+INSERT INTO inventory_items (name, product_id, unit, quantity, min_quantity, cost_per_unit, description, active, created_at, updated_at)
+SELECT v.name, v.pid, v.unit, v.qty, v.minq, v.cost, v.descr, true, NOW(), NOW()
+FROM (VALUES
+    ('Laptop Acer Gaming Nitro ProPanel ANV15-52-50VA', 1::bigint, 'chiếc', 14::numeric, 4::numeric, 23771800::numeric, 'Tồn kho Laptop Acer Gaming Nitro ProPanel ANV15-52-50VA.'),
+    ('Laptop Acer Gaming Aspire 7 A715-59G-59RD', 2::bigint, 'chiếc', 9::numeric, 3::numeric, 21311800::numeric, 'Tồn kho Laptop Acer Gaming Aspire 7 A715-59G-59RD.'),
+    ('Laptop Lenovo LOQ 15ARP10E 83S000DEVN', 3::bigint, 'chiếc', 24::numeric, 5::numeric, 24591800::numeric, 'Tồn kho Laptop Lenovo LOQ 15ARP10E 83S000DEVN.'),
+    ('Laptop HP Victus 15-FA2451TX D17WPPA', 4::bigint, 'chiếc', 8::numeric, 3::numeric, 24591800::numeric, 'Tồn kho Laptop HP Victus 15-FA2451TX D17WPPA.'),
+    ('Laptop Gigabyte Gaming A16 GA6H-CMHH2VN893SH', 5::bigint, 'chiếc', 34::numeric, 6::numeric, 22131800::numeric, 'Tồn kho Laptop Gigabyte Gaming A16 GA6H-CMHH2VN893SH.'),
+    ('Laptop ASUS Gaming V16 V3607VJ-TK189W', 6::bigint, 'chiếc', 11::numeric, 4::numeric, 21311800::numeric, 'Tồn kho Laptop ASUS Gaming V16 V3607VJ-TK189W.'),
+    ('Laptop ASUS TUF Gaming F16 FX608JHI-TU209W', 7::bigint, 'chiếc', 4::numeric, 3::numeric, 33611800::numeric, 'Tồn kho Laptop ASUS TUF Gaming F16 FX608JHI-TU209W.'),
+    ('Laptop Acer Gaming Nitro ProPanel ANV15-52-50RB', 8::bigint, 'chiếc', 20::numeric, 5::numeric, 27461800::numeric, 'Tồn kho Laptop Acer Gaming Nitro ProPanel ANV15-52-50RB.'),
+    ('Laptop MSI Cyborg 15 A13UC-2082VN', 9::bigint, 'chiếc', 28::numeric, 6::numeric, 22951800::numeric, 'Tồn kho Laptop MSI Cyborg 15 A13UC-2082VN.'),
+    ('Laptop MSI Katana 15 B13VEK-2440VN', 10::bigint, 'chiếc', 11::numeric, 3::numeric, 28691800::numeric, 'Tồn kho Laptop MSI Katana 15 B13VEK-2440VN.'),
+    ('Laptop ASUS TUF Gaming F16 FX607VJ-RL034W', 11::bigint, 'chiếc', 16::numeric, 4::numeric, 18851800::numeric, 'Tồn kho Laptop ASUS TUF Gaming F16 FX607VJ-RL034W.'),
+    ('Laptop ASUS TUF Gaming A15 FA506NCG-HN329W', 12::bigint, 'chiếc', 10::numeric, 3::numeric, 22541800::numeric, 'Tồn kho Laptop ASUS TUF Gaming A15 FA506NCG-HN329W.'),
+    ('Laptop HP Victus 15-FA2731TX B85LNPA', 13::bigint, 'chiếc', 16::numeric, 4::numeric, 22541800::numeric, 'Tồn kho Laptop HP Victus 15-FA2731TX B85LNPA.'),
+    ('Laptop Lenovo Legion 5 15IRX10 83LY00HRVN', 14::bigint, 'chiếc', 11::numeric, 3::numeric, 39351800::numeric, 'Tồn kho Laptop Lenovo Legion 5 15IRX10 83LY00HRVN.'),
+    ('MacBook Pro 14 M5 10CPU 10GPU 16GB 1TB | Chính hãng Apple Việt Nam', 15::bigint, 'chiếc', 26::numeric, 5::numeric, 43451800::numeric, 'Tồn kho MacBook Pro 14 M5 10CPU 10GPU 16GB 1TB | Chính hãng Apple Việt Nam.'),
+    ('Laptop ASUS Gaming V16 V3607VJ-RP071W', 16::bigint, 'chiếc', 5::numeric, 3::numeric, 21311800::numeric, 'Tồn kho Laptop ASUS Gaming V16 V3607VJ-RP071W.'),
+    ('Laptop ASUS ROG Strix G16 G614PH-S5101W', 17::bigint, 'chiếc', 31::numeric, 6::numeric, 38203800::numeric, 'Tồn kho Laptop ASUS ROG Strix G16 G614PH-S5101W.'),
+    ('Laptop Acer Gaming Aspire 7 A715-59G-57TU', 18::bigint, 'chiếc', 13::numeric, 4::numeric, 20491800::numeric, 'Tồn kho Laptop Acer Gaming Aspire 7 A715-59G-57TU.'),
+    ('MacBook Pro M5 Pro 14 inch 2026 15CPU 16GPU 24GB 1TB | Chính hãng Apple Việt Nam', 19::bigint, 'chiếc', 6::numeric, 3::numeric, 54931800::numeric, 'Tồn kho MacBook Pro M5 Pro 14 inch 2026 15CPU 16GPU 24GB 1TB | Chính hãng Apple Việt Nam.'),
+    ('Laptop ASUS TUF Gaming A15 FA506NCG-HN396W', 20::bigint, 'chiếc', 22::numeric, 5::numeric, 19671800::numeric, 'Tồn kho Laptop ASUS TUF Gaming A15 FA506NCG-HN396W.'),
+    ('Laptop Acer Predator Helios Neo 16S PHN16S-I51-98CX', 21::bigint, 'chiếc', 25::numeric, 6::numeric, 59851800::numeric, 'Tồn kho Laptop Acer Predator Helios Neo 16S PHN16S-I51-98CX.'),
+    ('Laptop Lenovo LOQ 15IRX9 83DV01ALVN', 22::bigint, 'chiếc', 8::numeric, 3::numeric, 31971800::numeric, 'Tồn kho Laptop Lenovo LOQ 15IRX9 83DV01ALVN.'),
+    ('Laptop Acer Aspire Go 15 AI AG15-52P-52WT', 23::bigint, 'chiếc', 18::numeric, 4::numeric, 18851800::numeric, 'Tồn kho Laptop Acer Aspire Go 15 AI AG15-52P-52WT.'),
+    ('Laptop Lenovo IdeaPad Slim 3 14IPH11 83UQ003NVN', 24::bigint, 'chiếc', 12::numeric, 3::numeric, 19343800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 3 14IPH11 83UQ003NVN.'),
+    ('Laptop ASUS Vivobook 15 X1504MA-BQ632W', 25::bigint, 'chiếc', 18::numeric, 4::numeric, 16391800::numeric, 'Tồn kho Laptop ASUS Vivobook 15 X1504MA-BQ632W.'),
+    ('Laptop HP 15-FD1289TU C2CV8PA', 26::bigint, 'chiếc', 8::numeric, 3::numeric, 21311800::numeric, 'Tồn kho Laptop HP 15-FD1289TU C2CV8PA.'),
+    ('Laptop ASUS VivoBook 16 X1607CA-MB980W', 27::bigint, 'chiếc', 23::numeric, 5::numeric, 18195800::numeric, 'Tồn kho Laptop ASUS VivoBook 16 X1607CA-MB980W.'),
+    ('Laptop ASUS Vivobook 14 X1404MA-EB219W', 28::bigint, 'chiếc', 7::numeric, 3::numeric, 16391800::numeric, 'Tồn kho Laptop ASUS Vivobook 14 X1404MA-EB219W.'),
+    ('Laptop Dell 15 DC15255 DC5R5973W1 - Bảo hành 2 năm', 29::bigint, 'chiếc', 33::numeric, 6::numeric, 19671800::numeric, 'Tồn kho Laptop Dell 15 DC15255 DC5R5973W1 - Bảo hành 2 năm.'),
+    ('Laptop Acer Aspire Lite 14 AL14-44P-R0SP', 30::bigint, 'chiếc', 15::numeric, 4::numeric, 16391800::numeric, 'Tồn kho Laptop Acer Aspire Lite 14 AL14-44P-R0SP.'),
+    ('Laptop Acer Aspire Lite 15 AL15-44P-R4UH', 31::bigint, 'chiếc', 3::numeric, 3::numeric, 18031800::numeric, 'Tồn kho Laptop Acer Aspire Lite 15 AL15-44P-R4UH.'),
+    ('Laptop HP Omnibook 5 AI 16-AF1048TU BZ7Q9PA', 32::bigint, 'chiếc', 19::numeric, 5::numeric, 21311800::numeric, 'Tồn kho Laptop HP Omnibook 5 AI 16-AF1048TU BZ7Q9PA.'),
+    ('Laptop ASUS VivoBook 14 X1407CA-LY008W', 33::bigint, 'chiếc', 27::numeric, 6::numeric, 18195800::numeric, 'Tồn kho Laptop ASUS VivoBook 14 X1407CA-LY008W.'),
+    ('Laptop Dell 14 DC14250 DC4C5386W', 34::bigint, 'chiếc', 10::numeric, 3::numeric, 22131800::numeric, 'Tồn kho Laptop Dell 14 DC14250 DC4C5386W.'),
+    ('MacBook Neo 13 inch A18 Pro 2026 6CPU 5GPU 8GB 256GB | Chính hãng Apple Việt Nam', 35::bigint, 'chiếc', 20::numeric, 4::numeric, 15571800::numeric, 'Tồn kho MacBook Neo 13 inch A18 Pro 2026 6CPU 5GPU 8GB 256GB | Chính hãng Apple Việt Nam.'),
+    ('Laptop ASUS Vivobook 14 X1404VA-EB355W', 36::bigint, 'chiếc', 9::numeric, 3::numeric, 18031800::numeric, 'Tồn kho Laptop ASUS Vivobook 14 X1404VA-EB355W.'),
+    ('MacBook Air M5 13 inch 2026 10CPU 8GPU 16GB 512GB | Chính hãng Apple Việt Nam', 37::bigint, 'chiếc', 15::numeric, 4::numeric, 28445800::numeric, 'Tồn kho MacBook Air M5 13 inch 2026 10CPU 8GPU 16GB 512GB | Chính hãng Apple Việt Nam.'),
+    ('Laptop MSI Modern 15 F1MG-1225VN', 38::bigint, 'chiếc', 10::numeric, 3::numeric, 15735800::numeric, 'Tồn kho Laptop MSI Modern 15 F1MG-1225VN.'),
+    ('MacBook Neo 13 inch A18 Pro 2026 6CPU 5GPU 8GB 512GB Touch ID | Chính hãng Apple Việt Nam', 39::bigint, 'chiếc', 25::numeric, 5::numeric, 17539800::numeric, 'Tồn kho MacBook Neo 13 inch A18 Pro 2026 6CPU 5GPU 8GB 512GB Touch ID | Chính hãng Apple Việt Nam.'),
+    ('MacBook Air M4 13 inch 2025 10CPU 8GPU 16GB 256GB | Chính hãng Apple Việt Nam', 40::bigint, 'chiếc', 9::numeric, 3::numeric, 20491800::numeric, 'Tồn kho MacBook Air M4 13 inch 2025 10CPU 8GPU 16GB 256GB | Chính hãng Apple Việt Nam.'),
+    ('MacBook Air M5 13 inch 2026 10CPU 8GPU 16GB 512GB Sạc 70W | Chính hãng Apple Việt Nam', 41::bigint, 'chiếc', 30::numeric, 6::numeric, 28691800::numeric, 'Tồn kho MacBook Air M5 13 inch 2026 10CPU 8GPU 16GB 512GB Sạc 70W | Chính hãng Apple Việt Nam.'),
+    ('Laptop Dell Pro 15 Essential PV15250 VKVKD - Nhập khẩu chính hãng', 42::bigint, 'chiếc', 12::numeric, 4::numeric, 13111800::numeric, 'Tồn kho Laptop Dell Pro 15 Essential PV15250 VKVKD - Nhập khẩu chính hãng.'),
+    ('Laptop Lenovo IdeaPad Slim 3 14IWC11 83RQ002PVN', 43::bigint, 'chiếc', 5::numeric, 3::numeric, 15571800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 3 14IWC11 83RQ002PVN.'),
+    ('Laptop HP 14‑EM0023AU D0BG7PA', 44::bigint, 'chiếc', 21::numeric, 5::numeric, 17457800::numeric, 'Tồn kho Laptop HP 14‑EM0023AU D0BG7PA.'),
+    ('Laptop Dell 15 DC15250 - Nhập khẩu chính hãng', 45::bigint, 'chiếc', 29::numeric, 6::numeric, 18031800::numeric, 'Tồn kho Laptop Dell 15 DC15250 - Nhập khẩu chính hãng.'),
+    ('Laptop ASUS Vivobook Go 15 E1504FA-BQ4821W', 46::bigint, 'chiếc', 7::numeric, 3::numeric, 15407800::numeric, 'Tồn kho Laptop ASUS Vivobook Go 15 E1504FA-BQ4821W.'),
+    ('Laptop ASUS Zenbook 14 UX3405CA-ST1713W', 47::bigint, 'chiếc', 17::numeric, 4::numeric, 24591800::numeric, 'Tồn kho Laptop ASUS Zenbook 14 UX3405CA-ST1713W.'),
+    ('MacBook Air M5 13 inch 2026 10CPU 10GPU 16GB 512GB Sạc 30W | Chính hãng Apple Việt Nam', 48::bigint, 'chiếc', 11::numeric, 3::numeric, 31775000::numeric, 'Tồn kho MacBook Air M5 13 inch 2026 10CPU 10GPU 16GB 512GB Sạc 30W | Chính hãng Apple Việt Nam.'),
+    ('Laptop Lenovo LOQ 15ARP10E 83S0004FVN', 49::bigint, 'chiếc', 17::numeric, 4::numeric, 30741800::numeric, 'Tồn kho Laptop Lenovo LOQ 15ARP10E 83S0004FVN.'),
+    ('Laptop Acer Gaming Predator Helios Neo 16 AI PHN16-73-757W', 50::bigint, 'chiếc', 12::numeric, 3::numeric, 50011800::numeric, 'Tồn kho Laptop Acer Gaming Predator Helios Neo 16 AI PHN16-73-757W.'),
+    ('Laptop ASUS ROG Strix G16 G614PP-TS112W', 51::bigint, 'chiếc', 22::numeric, 5::numeric, 49191800::numeric, 'Tồn kho Laptop ASUS ROG Strix G16 G614PP-TS112W.'),
+    ('Laptop ASUS TUF Gaming A14 FA401GM-RG013W', 52::bigint, 'chiếc', 6::numeric, 3::numeric, 47551800::numeric, 'Tồn kho Laptop ASUS TUF Gaming A14 FA401GM-RG013W.'),
+    ('Laptop ASUS ROG Strix G16 G614PH-RV176W', 53::bigint, 'chiếc', 32::numeric, 6::numeric, 40991800::numeric, 'Tồn kho Laptop ASUS ROG Strix G16 G614PH-RV176W.'),
+    ('Laptop Acer Gaming Nitro ProPanel ANV15-52-59RR', 54::bigint, 'chiếc', 14::numeric, 4::numeric, 29511800::numeric, 'Tồn kho Laptop Acer Gaming Nitro ProPanel ANV15-52-59RR.'),
+    ('Laptop ASUS TUF Gaming F16 FX608JHI-TU210W', 55::bigint, 'chiếc', 7::numeric, 3::numeric, 34103800::numeric, 'Tồn kho Laptop ASUS TUF Gaming F16 FX608JHI-TU210W.'),
+    ('Laptop Acer Gaming Nitro Propanel ANV16S-71-58WQ', 56::bigint, 'chiếc', 18::numeric, 5::numeric, 36891800::numeric, 'Tồn kho Laptop Acer Gaming Nitro Propanel ANV16S-71-58WQ.'),
+    ('Laptop ASUS Zenbook A14 UX3407QA-QD299WS', 57::bigint, 'chiếc', 26::numeric, 6::numeric, 23361800::numeric, 'Tồn kho Laptop ASUS Zenbook A14 UX3407QA-QD299WS.'),
+    ('Laptop ASUS ZenBook 14 UX3405CA-ST648W', 58::bigint, 'chiếc', 9::numeric, 3::numeric, 31643800::numeric, 'Tồn kho Laptop ASUS ZenBook 14 UX3405CA-ST648W.'),
+    ('Laptop ASUS Vivobook S14 S3407VA-LY147W', 59::bigint, 'chiếc', 19::numeric, 4::numeric, 21311800::numeric, 'Tồn kho Laptop ASUS Vivobook S14 S3407VA-LY147W.'),
+    ('Laptop HP OmniBook 7 14-FR0033TU C1MN2PA', 60::bigint, 'chiếc', 13::numeric, 3::numeric, 22541800::numeric, 'Tồn kho Laptop HP OmniBook 7 14-FR0033TU C1MN2PA.'),
+    ('Laptop ASUS VivoBook S14 M3407GA-SF030W', 61::bigint, 'chiếc', 14::numeric, 4::numeric, 22869800::numeric, 'Tồn kho Laptop ASUS VivoBook S14 M3407GA-SF030W.'),
+    ('Laptop Lenovo Yoga Slim 7 14AGP11 83QS001DVN', 62::bigint, 'chiếc', 9::numeric, 3::numeric, 31151800::numeric, 'Tồn kho Laptop Lenovo Yoga Slim 7 14AGP11 83QS001DVN.'),
+    ('Laptop Lenovo IdeaPad Slim 5 14IPH11 83S5000DVN', 63::bigint, 'chiếc', 24::numeric, 5::numeric, 24591800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 5 14IPH11 83S5000DVN.'),
+    ('Laptop ASUS Vivobook S14 S3407AA-SF032W', 64::bigint, 'chiếc', 8::numeric, 3::numeric, 25657800::numeric, 'Tồn kho Laptop ASUS Vivobook S14 S3407AA-SF032W.'),
+    ('Laptop ASUS Vivobook S14 S3407AA-SF945W', 65::bigint, 'chiếc', 34::numeric, 6::numeric, 23935800::numeric, 'Tồn kho Laptop ASUS Vivobook S14 S3407AA-SF945W.'),
+    ('Laptop ASUS VivoBook 14 X1404VA-EB609W', 66::bigint, 'chiếc', 11::numeric, 4::numeric, 13521800::numeric, 'Tồn kho Laptop ASUS VivoBook 14 X1404VA-EB609W.'),
+    ('MacBook Air M5 13 inch 2026 10CPU 10GPU 24GB 512GB Sạc 70W | Chính hãng Apple Việt Nam', 67::bigint, 'chiếc', 4::numeric, 3::numeric, 32545800::numeric, 'Tồn kho MacBook Air M5 13 inch 2026 10CPU 10GPU 24GB 512GB Sạc 70W | Chính hãng Apple Việt Nam.'),
+    ('Laptop ASUS Vivobook 14 X1404MA-EB027W', 68::bigint, 'chiếc', 20::numeric, 5::numeric, 14751800::numeric, 'Tồn kho Laptop ASUS Vivobook 14 X1404MA-EB027W.'),
+    ('MacBook Air M4 13 inch 2025 10CPU 10GPU 24GB 512GB Sạc 70W | Chính hãng Apple Việt Nam', 69::bigint, 'chiếc', 28::numeric, 6::numeric, 31561800::numeric, 'Tồn kho MacBook Air M4 13 inch 2025 10CPU 10GPU 24GB 512GB Sạc 70W | Chính hãng Apple Việt Nam.'),
+    ('MacBook Air M5 15 inch 2026 10CPU 10GPU 16GB 512GB | Chính hãng Apple Việt Nam', 70::bigint, 'chiếc', 11::numeric, 3::numeric, 33611800::numeric, 'Tồn kho MacBook Air M5 15 inch 2026 10CPU 10GPU 16GB 512GB | Chính hãng Apple Việt Nam.'),
+    ('MacBook Pro M5 Max 16 inch 2026 18CPU 40GPU 48GB 2TB Sạc 140W | Chính hãng Apple Việt Nam', 71::bigint, 'chiếc', 16::numeric, 4::numeric, 109871800::numeric, 'Tồn kho MacBook Pro M5 Max 16 inch 2026 18CPU 40GPU 48GB 2TB Sạc 140W | Chính hãng Apple Việt Nam.'),
+    ('Laptop Dell 15 DC15250 1XVHG V2 - Nhập khẩu chính hãng', 72::bigint, 'chiếc', 10::numeric, 3::numeric, 19261800::numeric, 'Tồn kho Laptop Dell 15 DC15250 1XVHG V2 - Nhập khẩu chính hãng.'),
+    ('Laptop HP Probook 455 G10 878U6PA', 73::bigint, 'chiếc', 16::numeric, 4::numeric, 19671800::numeric, 'Tồn kho Laptop HP Probook 455 G10 878U6PA.'),
+    ('Laptop HP Omnibook X Flip 14-FM0088TU BZ7Q2PA', 74::bigint, 'chiếc', 11::numeric, 3::numeric, 25739800::numeric, 'Tồn kho Laptop HP Omnibook X Flip 14-FM0088TU BZ7Q2PA.'),
+    ('Laptop HP Omnibook 5 16-AG1068AU BZ7T0PA', 75::bigint, 'chiếc', 26::numeric, 5::numeric, 21311800::numeric, 'Tồn kho Laptop HP Omnibook 5 16-AG1068AU BZ7T0PA.'),
+    ('Laptop Lenovo IdeaPad 5 2-in-1 14IPH11 83UG0026VN', 76::bigint, 'chiếc', 5::numeric, 3::numeric, 24591800::numeric, 'Tồn kho Laptop Lenovo IdeaPad 5 2-in-1 14IPH11 83UG0026VN.'),
+    ('Laptop Dell 15 DC15250 M0RCP - Nhập khẩu chính hãng', 77::bigint, 'chiếc', 31::numeric, 6::numeric, 21721800::numeric, 'Tồn kho Laptop Dell 15 DC15250 M0RCP - Nhập khẩu chính hãng.'),
+    ('Laptop Dell 15 DC15250 4CDJW - Nhập khẩu chính hãng', 78::bigint, 'chiếc', 13::numeric, 4::numeric, 20081800::numeric, 'Tồn kho Laptop Dell 15 DC15250 4CDJW - Nhập khẩu chính hãng.'),
+    ('Laptop HP Probook 455 G10 878T8PA', 79::bigint, 'chiếc', 6::numeric, 3::numeric, 21311800::numeric, 'Tồn kho Laptop HP Probook 455 G10 878T8PA.'),
+    ('Laptop Dell 15 DC15250 H5YXJ - Nhập khẩu chính hãng', 80::bigint, 'chiếc', 22::numeric, 5::numeric, 21721800::numeric, 'Tồn kho Laptop Dell 15 DC15250 H5YXJ - Nhập khẩu chính hãng.'),
+    ('Laptop HP ProBook 4 G1I 16 BQ5D8PT', 81::bigint, 'chiếc', 25::numeric, 6::numeric, 26887800::numeric, 'Tồn kho Laptop HP ProBook 4 G1I 16 BQ5D8PT.'),
+    ('Laptop Dell 15 DC15255 G8MK9 - Nhập khẩu chính hãng', 82::bigint, 'chiếc', 8::numeric, 3::numeric, 17621800::numeric, 'Tồn kho Laptop Dell 15 DC15255 G8MK9 - Nhập khẩu chính hãng.'),
+    ('Surface Pro 12 inch', 83::bigint, 'chiếc', 18::numeric, 4::numeric, 31971800::numeric, 'Tồn kho Surface Pro 12 inch.'),
+    ('Laptop Dell XPS 13 DX13260 DX3C5376W1', 84::bigint, 'chiếc', 12::numeric, 3::numeric, 38531800::numeric, 'Tồn kho Laptop Dell XPS 13 DX13260 DX3C5376W1.'),
+    ('Laptop ASUS ROG Flow Z13 GZ302EA-RU145WS', 85::bigint, 'chiếc', 18::numeric, 4::numeric, 76251800::numeric, 'Tồn kho Laptop ASUS ROG Flow Z13 GZ302EA-RU145WS.'),
+    ('Laptop ASUS ROG Flow Z13 GZ302EA-RU232WS', 86::bigint, 'chiếc', 8::numeric, 3::numeric, 90191800::numeric, 'Tồn kho Laptop ASUS ROG Flow Z13 GZ302EA-RU232WS.'),
+    ('Laptop HP Omnibook X Flip 14-FK0092AU BZ7P5PA', 87::bigint, 'chiếc', 23::numeric, 5::numeric, 25657800::numeric, 'Tồn kho Laptop HP Omnibook X Flip 14-FK0092AU BZ7P5PA.'),
+    ('Laptop HP Omnibook X Flip 14-FM0076TU BZ7P6PA', 88::bigint, 'chiếc', 7::numeric, 3::numeric, 31151800::numeric, 'Tồn kho Laptop HP Omnibook X Flip 14-FM0076TU BZ7P6PA.'),
+    ('Surface Pro 12 inch', 89::bigint, 'chiếc', 33::numeric, 6::numeric, 25411800::numeric, 'Tồn kho Surface Pro 12 inch.'),
+    ('Laptop ASUS Vivobook S 14 FLIP TP3402VA-LZ632W', 90::bigint, 'chiếc', 15::numeric, 4::numeric, 17211800::numeric, 'Tồn kho Laptop ASUS Vivobook S 14 FLIP TP3402VA-LZ632W.'),
+    ('Laptop HP Omnibook 5 AI 16-AF1046TU BZ7Q8PA', 91::bigint, 'chiếc', 3::numeric, 3::numeric, 22131800::numeric, 'Tồn kho Laptop HP Omnibook 5 AI 16-AF1046TU BZ7Q8PA.'),
+    ('Laptop HP Dragonfly G4 A9VD6PT', 92::bigint, 'chiếc', 19::numeric, 5::numeric, 45091800::numeric, 'Tồn kho Laptop HP Dragonfly G4 A9VD6PT.'),
+    ('Laptop ASUS Zenbook S 14 UX5406AA-SU348W', 93::bigint, 'chiếc', 27::numeric, 6::numeric, 38531800::numeric, 'Tồn kho Laptop ASUS Zenbook S 14 UX5406AA-SU348W.'),
+    ('Laptop HP Probook 445 G10 878T9PA', 94::bigint, 'chiếc', 10::numeric, 3::numeric, 21311800::numeric, 'Tồn kho Laptop HP Probook 445 G10 878T9PA.'),
+    ('Laptop ASUS Vivobook 14 Flip TP3407AA-SG029W', 95::bigint, 'chiếc', 20::numeric, 4::numeric, 30987800::numeric, 'Tồn kho Laptop ASUS Vivobook 14 Flip TP3407AA-SG029W.'),
+    ('Laptop ASUS VivoBook Go 14 E1404FA-EB935W', 96::bigint, 'chiếc', 9::numeric, 3::numeric, 16883800::numeric, 'Tồn kho Laptop ASUS VivoBook Go 14 E1404FA-EB935W.'),
+    ('Laptop ASUS TUF Gaming F16 FX607VJR-TU320W', 97::bigint, 'chiếc', 15::numeric, 4::numeric, 24591800::numeric, 'Tồn kho Laptop ASUS TUF Gaming F16 FX607VJR-TU320W.'),
+    ('Laptop ASUS Vivobook 14 X1407CA-LY203W', 98::bigint, 'chiếc', 10::numeric, 3::numeric, 19671800::numeric, 'Tồn kho Laptop ASUS Vivobook 14 X1407CA-LY203W.'),
+    ('Laptop Dell 15 DC15250 KR0N9 - Nhập khẩu chính hãng', 99::bigint, 'chiếc', 25::numeric, 5::numeric, 14751800::numeric, 'Tồn kho Laptop Dell 15 DC15250 KR0N9 - Nhập khẩu chính hãng.'),
+    ('Laptop Dell 14 DC14250 C3U085W11SLU', 100::bigint, 'chiếc', 9::numeric, 3::numeric, 15571800::numeric, 'Tồn kho Laptop Dell 14 DC14250 C3U085W11SLU.'),
+    ('Laptop Dell Latitude 3450 L3450-1335U-16512W-UMC', 101::bigint, 'chiếc', 30::numeric, 6::numeric, 15161800::numeric, 'Tồn kho Laptop Dell Latitude 3450 L3450-1335U-16512W-UMC.'),
+    ('Laptop Dell Vostro 3530 2H1TPI7', 102::bigint, 'chiếc', 12::numeric, 4::numeric, 19261800::numeric, 'Tồn kho Laptop Dell Vostro 3530 2H1TPI7.'),
+    ('Laptop Dell Inspiron 14 5440 D0F3W - Nhập khẩu chính hãng', 103::bigint, 'chiếc', 5::numeric, 3::numeric, 16391800::numeric, 'Tồn kho Laptop Dell Inspiron 14 5440 D0F3W - Nhập khẩu chính hãng.'),
+    ('Laptop Dell 15 DC15250 71084747', 104::bigint, 'chiếc', 21::numeric, 5::numeric, 20901800::numeric, 'Tồn kho Laptop Dell 15 DC15250 71084747.'),
+    ('Laptop Dell 15 DC15250 CPH99', 105::bigint, 'chiếc', 29::numeric, 6::numeric, 19261800::numeric, 'Tồn kho Laptop Dell 15 DC15250 CPH99.'),
+    ('Laptop Dell 14 DC14255 71083617', 106::bigint, 'chiếc', 7::numeric, 3::numeric, 24591800::numeric, 'Tồn kho Laptop Dell 14 DC14255 71083617.'),
+    ('Laptop Dell 15 DC15255 X9YM41', 107::bigint, 'chiếc', 17::numeric, 4::numeric, 20491800::numeric, 'Tồn kho Laptop Dell 15 DC15255 X9YM41.'),
+    ('Laptop Dell 16 Plus DB16250 DB6U5387W1', 108::bigint, 'chiếc', 11::numeric, 3::numeric, 29511800::numeric, 'Tồn kho Laptop Dell 16 Plus DB16250 DB6U5387W1.'),
+    ('Laptop Dell 15 DC15250 71084746', 109::bigint, 'chiếc', 17::numeric, 4::numeric, 19261800::numeric, 'Tồn kho Laptop Dell 15 DC15250 71084746.'),
+    ('Laptop Dell 16 DC16251 DC6C7557W1', 110::bigint, 'chiếc', 12::numeric, 3::numeric, 27871800::numeric, 'Tồn kho Laptop Dell 16 DC16251 DC6C7557W1.'),
+    ('Laptop Dell 15 DC15250 DC5I7748W1', 111::bigint, 'chiếc', 22::numeric, 5::numeric, 20491800::numeric, 'Tồn kho Laptop Dell 15 DC15250 DC5I7748W1.'),
+    ('Laptop HP Victus 15-FB3116AX BX8U4PA', 112::bigint, 'chiếc', 6::numeric, 3::numeric, 22541800::numeric, 'Tồn kho Laptop HP Victus 15-FB3116AX BX8U4PA.'),
+    ('Laptop HP Gaming OMEN 16-AM0176TX BX9D3PA', 113::bigint, 'chiếc', 32::numeric, 6::numeric, 35989800::numeric, 'Tồn kho Laptop HP Gaming OMEN 16-AM0176TX BX9D3PA.'),
+    ('Laptop HP 250 G10 B3WA7AT', 114::bigint, 'chiếc', 14::numeric, 4::numeric, 15571800::numeric, 'Tồn kho Laptop HP 250 G10 B3WA7AT.'),
+    ('Laptop HP 250 G10 B73TQAT', 115::bigint, 'chiếc', 7::numeric, 3::numeric, 13521800::numeric, 'Tồn kho Laptop HP 250 G10 B73TQAT.'),
+    ('Laptop HP 250R G9 AX3C8AT', 116::bigint, 'chiếc', 18::numeric, 5::numeric, 13521800::numeric, 'Tồn kho Laptop HP 250R G9 AX3C8AT.'),
+    ('Laptop HP 14-EP1178TU C89ZRPA', 117::bigint, 'chiếc', 26::numeric, 6::numeric, 18851800::numeric, 'Tồn kho Laptop HP 14-EP1178TU C89ZRPA.'),
+    ('Laptop HP 250R G10 C3RV3AT', 118::bigint, 'chiếc', 9::numeric, 3::numeric, 13931800::numeric, 'Tồn kho Laptop HP 250R G10 C3RV3AT.'),
+    ('Laptop HP Victus 16-R0376TX AY8Z2PA', 119::bigint, 'chiếc', 19::numeric, 4::numeric, 20491800::numeric, 'Tồn kho Laptop HP Victus 16-R0376TX AY8Z2PA.'),
+    ('Laptop HP 250 G9 AG2K7AT', 120::bigint, 'chiếc', 13::numeric, 3::numeric, 15571800::numeric, 'Tồn kho Laptop HP 250 G9 AG2K7AT.'),
+    ('Laptop Lenovo V15 G5 IRL 83HF00BRVA', 121::bigint, 'chiếc', 14::numeric, 4::numeric, 15981800::numeric, 'Tồn kho Laptop Lenovo V15 G5 IRL 83HF00BRVA.'),
+    ('Laptop Lenovo IdeaPad Slim 3 16IWC11 83RS002KVN', 122::bigint, 'chiếc', 9::numeric, 3::numeric, 15571800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 3 16IWC11 83RS002KVN.'),
+    ('Laptop Lenovo LOQ 15ARP10E 83S0007AVN', 123::bigint, 'chiếc', 24::numeric, 5::numeric, 24181800::numeric, 'Tồn kho Laptop Lenovo LOQ 15ARP10E 83S0007AVN.'),
+    ('Laptop Lenovo ThinkPad E14 Gen 7 21T90025VN', 124::bigint, 'chiếc', 8::numeric, 3::numeric, 28691800::numeric, 'Tồn kho Laptop Lenovo ThinkPad E14 Gen 7 21T90025VN.'),
+    ('Laptop Lenovo LOQ Essential 15ARP10E 83S0000DVN', 125::bigint, 'chiếc', 34::numeric, 6::numeric, 21803800::numeric, 'Tồn kho Laptop Lenovo LOQ Essential 15ARP10E 83S0000DVN.'),
+    ('Laptop Lenovo IdeaPad Slim 5 14AKP10 83HX00ABVN', 126::bigint, 'chiếc', 11::numeric, 4::numeric, 23361800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 5 14AKP10 83HX00ABVN.'),
+    ('Laptop Lenovo Legion 7 16IAX10 83KY001UVN', 127::bigint, 'chiếc', 4::numeric, 3::numeric, 65837800::numeric, 'Tồn kho Laptop Lenovo Legion 7 16IAX10 83KY001UVN.'),
+    ('Laptop Lenovo IdeaPad Slim 3 14IWC11 83RQ002NVN', 128::bigint, 'chiếc', 20::numeric, 5::numeric, 18031800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 3 14IWC11 83RQ002NVN.'),
+    ('Laptop Lenovo LOQ 15AHP11 83TN0040VN', 129::bigint, 'chiếc', 28::numeric, 6::numeric, 34431800::numeric, 'Tồn kho Laptop Lenovo LOQ 15AHP11 83TN0040VN.'),
+    ('Laptop Lenovo Yoga Slim 7 14IPH11 83QM002EVN', 130::bigint, 'chiếc', 11::numeric, 3::numeric, 44681800::numeric, 'Tồn kho Laptop Lenovo Yoga Slim 7 14IPH11 83QM002EVN.'),
+    ('Laptop Lenovo IdeaPad Slim 3 14ARP10 83K600E9VN', 131::bigint, 'chiếc', 16::numeric, 4::numeric, 16801800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 3 14ARP10 83K600E9VN.'),
+    ('Laptop Lenovo IdeaPad Slim 3 14IRH10 83K00008VN', 132::bigint, 'chiếc', 10::numeric, 3::numeric, 14341800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 3 14IRH10 83K00008VN.'),
+    ('Laptop Lenovo ThinkBook 16 G9 IRL 21US008FVN', 133::bigint, 'chiếc', 16::numeric, 4::numeric, 22541800::numeric, 'Tồn kho Laptop Lenovo ThinkBook 16 G9 IRL 21US008FVN.'),
+    ('Laptop Lenovo IdeaPad Slim 3 15Q8X10 83N3002PVN', 134::bigint, 'chiếc', 11::numeric, 3::numeric, 18031800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 3 15Q8X10 83N3002PVN.'),
+    ('Laptop Lenovo IdeaPad Slim 3 16IPH11 83US002TVN', 135::bigint, 'chiếc', 26::numeric, 5::numeric, 23361800::numeric, 'Tồn kho Laptop Lenovo IdeaPad Slim 3 16IPH11 83US002TVN.'),
+    ('Laptop Acer Aspire Lite 15 AL15-46P-R73C', 136::bigint, 'chiếc', 5::numeric, 3::numeric, 13111800::numeric, 'Tồn kho Laptop Acer Aspire Lite 15 AL15-46P-R73C.'),
+    ('Laptop Acer Predator Helios Neo 16S PHN16S-I51-97T9', 137::bigint, 'chiếc', 31::numeric, 6::numeric, 62311800::numeric, 'Tồn kho Laptop Acer Predator Helios Neo 16S PHN16S-I51-97T9.'),
+    ('Laptop Acer Gaming Nitro Lite 16 NL16-71G-71UJ', 138::bigint, 'chiếc', 13::numeric, 4::numeric, 22951800::numeric, 'Tồn kho Laptop Acer Gaming Nitro Lite 16 NL16-71G-71UJ.'),
+    ('Laptop Acer Gaming Predator Helios Neo 16S AI PHN16S-71-95MS', 139::bigint, 'chiếc', 6::numeric, 3::numeric, 94300000::numeric, 'Tồn kho Laptop Acer Gaming Predator Helios Neo 16S AI PHN16S-71-95MS.'),
+    ('Laptop Acer Gaming Nitro V 15 ANV15-41-R732', 140::bigint, 'chiếc', 22::numeric, 5::numeric, 24181800::numeric, 'Tồn kho Laptop Acer Gaming Nitro V 15 ANV15-41-R732.'),
+    ('Laptop Acer Gaming Predator Helios Neo 16 PHN16-I31-50H7', 141::bigint, 'chiếc', 25::numeric, 6::numeric, 40991800::numeric, 'Tồn kho Laptop Acer Gaming Predator Helios Neo 16 PHN16-I31-50H7.'),
+    ('Laptop Acer Aspire Lite 14 AL14-47P-R0TR', 142::bigint, 'chiếc', 8::numeric, 3::numeric, 14751800::numeric, 'Tồn kho Laptop Acer Aspire Lite 14 AL14-47P-R0TR.'),
+    ('Laptop Acer Gaming Nitro Lite 16 NL16-71G-71FN', 143::bigint, 'chiếc', 18::numeric, 4::numeric, 25411800::numeric, 'Tồn kho Laptop Acer Gaming Nitro Lite 16 NL16-71G-71FN.'),
+    ('Laptop Acer Gaming Predator Helios Neo 16 PHN16-I31-72XE', 144::bigint, 'chiếc', 12::numeric, 3::numeric, 49191800::numeric, 'Tồn kho Laptop Acer Gaming Predator Helios Neo 16 PHN16-I31-72XE.'),
+    ('Laptop Acer Swift Go SFG14-41-R251', 145::bigint, 'chiếc', 18::numeric, 4::numeric, 16391800::numeric, 'Tồn kho Laptop Acer Swift Go SFG14-41-R251.'),
+    ('Laptop Acer Aspire Go 15 AG15-72P-54GY', 146::bigint, 'chiếc', 8::numeric, 3::numeric, 16391800::numeric, 'Tồn kho Laptop Acer Aspire Go 15 AG15-72P-54GY.'),
+    ('Laptop Acer Aspire Lite Gen 2 AL14-52M-32KV', 147::bigint, 'chiếc', 23::numeric, 5::numeric, 11061800::numeric, 'Tồn kho Laptop Acer Aspire Lite Gen 2 AL14-52M-32KV.'),
+    ('Laptop Acer Gaming Nitro ProPanel ANV15-41-R0Y4', 148::bigint, 'chiếc', 7::numeric, 3::numeric, 25411800::numeric, 'Tồn kho Laptop Acer Gaming Nitro ProPanel ANV15-41-R0Y4.'),
+    ('Laptop Acer Gaming Nitro ProPanel ANV15-41-R0FE', 149::bigint, 'chiếc', 33::numeric, 6::numeric, 24591800::numeric, 'Tồn kho Laptop Acer Gaming Nitro ProPanel ANV15-41-R0FE.'),
+    ('Laptop Acer Aspire Lite 15 AL15-21P-R91W', 150::bigint, 'chiếc', 15::numeric, 4::numeric, 16391800::numeric, 'Tồn kho Laptop Acer Aspire Lite 15 AL15-21P-R91W.'),
+    ('Laptop MSI Prestige 14 AI+ EVO C2VMG-020VN', 151::bigint, 'chiếc', 3::numeric, 3::numeric, 27871800::numeric, 'Tồn kho Laptop MSI Prestige 14 AI+ EVO C2VMG-020VN.'),
+    ('Laptop MSI Stealth 16 AI+ B3WG-008VN', 152::bigint, 'chiếc', 19::numeric, 5::numeric, 69363800::numeric, 'Tồn kho Laptop MSI Stealth 16 AI+ B3WG-008VN.'),
+    ('Laptop MSI Cyborg 15 A13UC-2088VN', 153::bigint, 'chiếc', 27::numeric, 6::numeric, 20491800::numeric, 'Tồn kho Laptop MSI Cyborg 15 A13UC-2088VN.'),
+    ('Laptop MSI Modern 14 F1MG-432VN', 154::bigint, 'chiếc', 10::numeric, 3::numeric, 15735800::numeric, 'Tồn kho Laptop MSI Modern 14 F1MG-432VN.'),
+    ('Laptop MSI Prestige 13 AI+ Evo A2VMG-040VN', 155::bigint, 'chiếc', 20::numeric, 4::numeric, 34431800::numeric, 'Tồn kho Laptop MSI Prestige 13 AI+ Evo A2VMG-040VN.'),
+    ('Laptop MSI Cyborg 15 Black Edition A13VEO-2610VN', 156::bigint, 'chiếc', 9::numeric, 3::numeric, 23443800::numeric, 'Tồn kho Laptop MSI Cyborg 15 Black Edition A13VEO-2610VN.'),
+    ('Laptop MSI Vector 16 HX AI A2XWHG-010VN', 157::bigint, 'chiếc', 15::numeric, 4::numeric, 53291800::numeric, 'Tồn kho Laptop MSI Vector 16 HX AI A2XWHG-010VN.'),
+    ('Laptop MSI Cyborg 15 B13WFKG-658VN', 158::bigint, 'chiếc', 10::numeric, 3::numeric, 31151800::numeric, 'Tồn kho Laptop MSI Cyborg 15 B13WFKG-658VN.'),
+    ('Laptop MSI Cyborg 15 A13VEK-2089VN', 159::bigint, 'chiếc', 25::numeric, 5::numeric, 25411800::numeric, 'Tồn kho Laptop MSI Cyborg 15 A13VEK-2089VN.'),
+    ('Laptop MSI Venture 14 AI A1MG-005VN', 160::bigint, 'chiếc', 9::numeric, 3::numeric, 21311800::numeric, 'Tồn kho Laptop MSI Venture 14 AI A1MG-005VN.'),
+    ('Laptop MSI Modern 14 F13MG-466VN', 161::bigint, 'chiếc', 30::numeric, 6::numeric, 17211800::numeric, 'Tồn kho Laptop MSI Modern 14 F13MG-466VN.'),
+    ('Laptop MSI Modern 14 H1M-014VN', 162::bigint, 'chiếc', 12::numeric, 4::numeric, 18851800::numeric, 'Tồn kho Laptop MSI Modern 14 H1M-014VN.'),
+    ('Laptop MSI Cyborg 15 B13WEKG-676VN', 163::bigint, 'chiếc', 5::numeric, 3::numeric, 27871800::numeric, 'Tồn kho Laptop MSI Cyborg 15 B13WEKG-676VN.'),
+    ('Laptop MSI Prestige 14 AI Studio C1UDXG-058VN', 164::bigint, 'chiếc', 21::numeric, 5::numeric, 23771800::numeric, 'Tồn kho Laptop MSI Prestige 14 AI Studio C1UDXG-058VN.'),
+    ('Laptop MSI Cyborg 15 C13WEO-417VN', 165::bigint, 'chiếc', 29::numeric, 6::numeric, 28363800::numeric, 'Tồn kho Laptop MSI Cyborg 15 C13WEO-417VN.'),
+    ('Laptop MSI Katana 15 B13VFK-676VN', 166::bigint, 'chiếc', 7::numeric, 3::numeric, 23771800::numeric, 'Tồn kho Laptop MSI Katana 15 B13VFK-676VN.'),
+    ('Laptop MSI Crosshair 16 HX AI D2XWGKG-034VN', 167::bigint, 'chiếc', 17::numeric, 4::numeric, 47551800::numeric, 'Tồn kho Laptop MSI Crosshair 16 HX AI D2XWGKG-034VN.'),
+    ('Laptop Gigabyte Gaming A16 GA6H-CMHI2VN893SH', 168::bigint, 'chiếc', 11::numeric, 3::numeric, 25001800::numeric, 'Tồn kho Laptop Gigabyte Gaming A16 GA6H-CMHI2VN893SH.'),
+    ('Laptop Gigabyte Gaming A16 GA6H-CTHH3VN893SH', 169::bigint, 'chiếc', 17::numeric, 4::numeric, 27871800::numeric, 'Tồn kho Laptop Gigabyte Gaming A16 GA6H-CTHH3VN893SH.'),
+    ('Laptop Gaming Gigabyte Eagle GL6J-9LJR2VNF93SH', 170::bigint, 'chiếc', 12::numeric, 3::numeric, 24591800::numeric, 'Tồn kho Laptop Gaming Gigabyte Eagle GL6J-9LJR2VNF93SH.'),
+    ('Laptop Gaming Gigabyte Eagle GL6J-9MJR2VNF93SH', 171::bigint, 'chiếc', 22::numeric, 5::numeric, 26641800::numeric, 'Tồn kho Laptop Gaming Gigabyte Eagle GL6J-9MJR2VNF93SH.'),
+    ('Laptop Gigabyte Gaming A16 GA65H-5THP3VN893SH', 172::bigint, 'chiếc', 6::numeric, 3::numeric, 28281800::numeric, 'Tồn kho Laptop Gigabyte Gaming A16 GA65H-5THP3VN893SH.'),
+    ('Laptop Gigabyte AERO X16 EG61H-1VH93VNC94AH', 173::bigint, 'chiếc', 32::numeric, 6::numeric, 35661800::numeric, 'Tồn kho Laptop Gigabyte AERO X16 EG61H-1VH93VNC94AH.'),
+    ('Laptop Gigabyte Gaming A16 GA6H-CVHI3VN893SH', 174::bigint, 'chiếc', 14::numeric, 4::numeric, 31151800::numeric, 'Tồn kho Laptop Gigabyte Gaming A16 GA6H-CVHI3VN893SH.'),
+    ('Laptop Gigabyte Gaming A16 GA6H-CTHI3VN893SH', 175::bigint, 'chiếc', 7::numeric, 3::numeric, 28363800::numeric, 'Tồn kho Laptop Gigabyte Gaming A16 GA6H-CTHI3VN893SH.'),
+    ('Laptop Gigabyte AERO X16 EG61H-X161VH93VNC94DH', 176::bigint, 'chiếc', 18::numeric, 5::numeric, 35251800::numeric, 'Tồn kho Laptop Gigabyte AERO X16 EG61H-X161VH93VNC94DH.'),
+    ('Laptop ASUS TUF Gaming A16 FA607NUQ-RL007W', 177::bigint, 'chiếc', 26::numeric, 6::numeric, 28691800::numeric, 'Tồn kho Laptop ASUS TUF Gaming A16 FA607NUQ-RL007W.'),
+    ('Laptop ASUS VivoBook S14 S3407CA-SF913W', 178::bigint, 'chiếc', 9::numeric, 3::numeric, 22049800::numeric, 'Tồn kho Laptop ASUS VivoBook S14 S3407CA-SF913W.'),
+    ('Laptop Dell 14 DC14250 DC4C5375W1 - Bảo hành 2 năm', 179::bigint, 'chiếc', 19::numeric, 4::numeric, 23771800::numeric, 'Tồn kho Laptop Dell 14 DC14250 DC4C5375W1 - Bảo hành 2 năm.')
+) AS v(name, pid, unit, qty, minq, cost, descr)
 WHERE NOT EXISTS (SELECT 1 FROM inventory_items WHERE product_id IS NOT NULL);
 
--- (2) Linh kiện, phụ kiện phục vụ bảo hành, sửa chữa (không gắn sản phẩm bán ra)
-INSERT INTO inventory_items (name, product_id, unit, quantity, min_quantity, cost_per_unit, expiry_date, description, active, created_at, updated_at)
-SELECT * FROM (VALUES
-  ('RAM DDR5 16GB',            NULL::bigint, 'thanh', 120, 20, 1200000, NULL::date, 'RAM DDR5 16GB 4800MHz cho laptop.',               true, NOW(), NOW()),
-  ('SSD NVMe 1TB',             NULL,         'cái',    80, 15, 1800000, NULL,       'Ổ cứng SSD NVMe PCIe Gen4 1TB.',                  true, NOW(), NOW()),
-  ('Sạc laptop 65W USB-C',     NULL,         'cái',   200, 30,  350000, NULL,       'Củ sạc nhanh 65W chuẩn USB-C.',                   true, NOW(), NOW()),
-  ('Pin laptop thay thế',      NULL,         'cái',    45, 10,  900000, NULL,       'Pin laptop dung lượng cao, tương thích đa dòng.', true, NOW(), NOW()),
-  ('Bàn phím laptop thay thế', NULL,         'cái',    60, 10,  450000, NULL,       'Bàn phím thay thế cho laptop phổ thông.',         true, NOW(), NOW()),
-  ('Màn hình laptop 15.6" FHD',NULL,         'cái',    25,  5, 1500000, NULL,       'Panel màn hình 15.6 inch Full HD.',               true, NOW(), NOW())
-) AS t(name, product_id, unit, quantity, min_quantity, cost_per_unit, expiry_date, description, active, created_at, updated_at)
+-- (2) Vật tư đóng gói phục vụ giao hàng (không gắn sản phẩm bán ra)
+INSERT INTO inventory_items (name, product_id, unit, quantity, min_quantity, cost_per_unit, description, active, created_at, updated_at)
+SELECT v.name, v.pid, v.unit, v.qty, v.minq, v.cost, v.descr, true, NOW(), NOW()
+FROM (VALUES
+    ('Thùng carton đóng gói laptop', NULL::bigint, 'cái', 400::numeric, 60::numeric, 15000::numeric, 'Thùng carton 5 lớp chuyên đóng gói laptop.'),
+    ('Mút xốp chèn góc', NULL::bigint, 'bộ', 350::numeric, 50::numeric, 9000::numeric, 'Mút xốp chèn bốn góc máy chống va đập.'),
+    ('Màng bọc chống sốc (bong bóng khí)', NULL::bigint, 'mét', 1000::numeric, 150::numeric, 3000::numeric, 'Màng xốp hơi quấn quanh máy khi vận chuyển.'),
+    ('Băng keo đóng gói', NULL::bigint, 'cuộn', 250::numeric, 40::numeric, 12000::numeric, 'Băng keo trong khổ lớn niêm phong thùng hàng.'),
+    ('Túi chống ẩm', NULL::bigint, 'gói', 500::numeric, 80::numeric, 2000::numeric, 'Gói hút ẩm đặt kèm trong thùng máy.'),
+    ('Nhãn dán vận chuyển', NULL::bigint, 'tờ', 1500::numeric, 200::numeric, 500::numeric, 'Nhãn in mã đơn và địa chỉ giao hàng.')
+) AS v(name, pid, unit, qty, minq, cost, descr)
 WHERE NOT EXISTS (SELECT 1 FROM inventory_items WHERE product_id IS NULL);
 
--- Đồng bộ sequence IDENTITY để insert sau này không đụng id
 SELECT setval(pg_get_serial_sequence('inventory_items', 'id'), COALESCE((SELECT MAX(id) FROM inventory_items), 1), true);

@@ -84,11 +84,12 @@ export default function ProductModal({ item, onClose, addToCart }) {
         </button>
 
         {/* Left Side: Image & Basic Info */}
-        <div className="w-full md:w-1/2 bg-slate-950 flex flex-col relative h-64 md:h-auto">
+        {/* Nền trắng + object-contain để giữ nguyên dòng cấu hình in ở mép dưới ảnh sản phẩm */}
+        <div className="w-full md:w-1/2 bg-white flex flex-col relative h-64 md:h-auto">
           <img
             src={item.imageUrl || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853'}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"></div>
           <div className="absolute bottom-0 left-0 p-6 text-white w-full">
