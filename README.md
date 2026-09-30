@@ -124,7 +124,7 @@ docker compose -p duong up -d --build
 ```
 Lần đầu build có thể mất vài phút (~1–2 phút). Kiểm tra trạng thái: `docker compose -p duong ps`.
 
-> 📦 **Dữ liệu mẫu tự nạp:** Ngay lần chạy đầu tiên, backend tự động nạp dữ liệu demo — **112 laptop** (5 danh mục), **17 đơn hàng** và **tồn kho** — nhờ cơ chế `data.sql` của Spring Boot. Không cần import thủ công. Cơ chế idempotent: chỉ nạp khi database còn rỗng, chạy lại `up` sẽ không tạo trùng.
+> 📦 **Dữ liệu mẫu tự nạp:** Ngay lần chạy đầu tiên, backend tự động nạp dữ liệu demo — **179 laptop có thật kèm ảnh** (4 danh mục: Gaming 65, Văn phòng 83, Ultrabook 26, Đồ hoạ 5), **17 đơn hàng** và **tồn kho** — nhờ cơ chế `data.sql` của Spring Boot. Không cần import thủ công. Cơ chế idempotent: chỉ nạp khi database còn rỗng, chạy lại `up` sẽ không tạo trùng. Ảnh sản phẩm nằm sẵn trong `frontend/public/products/cps/`, không gọi ra mạng ngoài.
 
 Truy cập kiểm tra:
 - **Eureka Dashboard:** http://localhost:9761
@@ -204,6 +204,30 @@ docker compose -p duong up -d --build service-auth
 
 # Xoá volumes (reset database)
 docker compose -p duong down -v
+```
+
+---
+
+## 🔄 Cập nhật khi có code mới
+
+Mã nguồn Java được đóng gói sẵn vào image Docker, nên chỉ chạy `up -d` sẽ dùng lại
+image cũ và **không thấy thay đổi gì**. Phải có `--build`:
+
+```bash
+git pull
+docker compose -p duong up -d --build
+```
+
+Dữ liệu mẫu trong `data.sql` tự nhận biết và tự cập nhật, không cần xoá database:
+bộ sản phẩm cũ (ảnh `loremflickr` nay đã hỏng) bị dọn đi và thay bằng bộ 179 laptop
+mới, các cột tiền `numeric(10,2)` được nới lên `numeric(15,2)` để chứa được máy trên
+100 triệu. Đơn hàng và tài khoản đã có vẫn giữ nguyên.
+
+Phần giao diện thì chỉ cần cài lại thư viện nếu `package.json` đổi, rồi chạy như cũ:
+
+```bash
+cd frontend && npm install && npm run dev
+cd frontend-admin && npm install && npm run dev
 ```
 
 ---

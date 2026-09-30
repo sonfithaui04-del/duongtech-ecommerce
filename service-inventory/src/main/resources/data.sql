@@ -203,16 +203,17 @@ FROM (VALUES
 ) AS v(name, pid, unit, qty, minq, cost, descr)
 WHERE NOT EXISTS (SELECT 1 FROM inventory_items WHERE product_id IS NOT NULL);
 
--- (2) Vật tư đóng gói phục vụ giao hàng (không gắn sản phẩm bán ra)
+-- (2) Linh kiện, phụ kiện phục vụ bảo hành và sửa chữa (không gắn sản phẩm bán ra).
+--     Giữ nguyên danh sách của bộ dữ liệu cũ để máy đã cài sẵn và máy cài mới giống nhau.
 INSERT INTO inventory_items (name, product_id, unit, quantity, min_quantity, cost_per_unit, description, active, created_at, updated_at)
 SELECT v.name, v.pid, v.unit, v.qty, v.minq, v.cost, v.descr, true, NOW(), NOW()
 FROM (VALUES
-    ('Thùng carton đóng gói laptop', NULL::bigint, 'cái', 400::numeric, 60::numeric, 15000::numeric, 'Thùng carton 5 lớp chuyên đóng gói laptop.'),
-    ('Mút xốp chèn góc', NULL::bigint, 'bộ', 350::numeric, 50::numeric, 9000::numeric, 'Mút xốp chèn bốn góc máy chống va đập.'),
-    ('Màng bọc chống sốc (bong bóng khí)', NULL::bigint, 'mét', 1000::numeric, 150::numeric, 3000::numeric, 'Màng xốp hơi quấn quanh máy khi vận chuyển.'),
-    ('Băng keo đóng gói', NULL::bigint, 'cuộn', 250::numeric, 40::numeric, 12000::numeric, 'Băng keo trong khổ lớn niêm phong thùng hàng.'),
-    ('Túi chống ẩm', NULL::bigint, 'gói', 500::numeric, 80::numeric, 2000::numeric, 'Gói hút ẩm đặt kèm trong thùng máy.'),
-    ('Nhãn dán vận chuyển', NULL::bigint, 'tờ', 1500::numeric, 200::numeric, 500::numeric, 'Nhãn in mã đơn và địa chỉ giao hàng.')
+    ('RAM DDR5 16GB', NULL::bigint, 'thanh', 120::numeric, 20::numeric, 1200000::numeric, 'RAM DDR5 16GB 4800MHz cho laptop.'),
+    ('SSD NVMe 1TB', NULL::bigint, 'cái', 80::numeric, 15::numeric, 1800000::numeric, 'Ổ cứng SSD NVMe PCIe Gen4 1TB.'),
+    ('Sạc laptop 65W USB-C', NULL::bigint, 'cái', 200::numeric, 30::numeric, 350000::numeric, 'Củ sạc nhanh 65W chuẩn USB-C.'),
+    ('Pin laptop thay thế', NULL::bigint, 'cái', 45::numeric, 10::numeric, 900000::numeric, 'Pin laptop dung lượng cao, tương thích đa dòng.'),
+    ('Bàn phím laptop thay thế', NULL::bigint, 'cái', 60::numeric, 10::numeric, 450000::numeric, 'Bàn phím thay thế cho laptop phổ thông.'),
+    ('Màn hình laptop 15.6" FHD', NULL::bigint, 'cái', 25::numeric, 5::numeric, 1500000::numeric, 'Panel màn hình 15.6 inch Full HD.')
 ) AS v(name, pid, unit, qty, minq, cost, descr)
 WHERE NOT EXISTS (SELECT 1 FROM inventory_items WHERE product_id IS NULL);
 
