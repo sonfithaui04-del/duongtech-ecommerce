@@ -27,6 +27,8 @@ services:
       dockerfile: Dockerfile
     container_name: duong-eureka-server
     restart: unless-stopped
+    environment:
+      TZ: Asia/Ho_Chi_Minh
     ports:
       - "9761:8761"
     networks:
@@ -42,6 +44,9 @@ services:
     ports:
       - "9080:8080"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      TZ: Asia/Ho_Chi_Minh
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
       - eureka-server
@@ -78,6 +83,9 @@ services:
     ports:
       - "9081:8081"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      TZ: Asia/Ho_Chi_Minh
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/duongtech_auth
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
@@ -115,6 +123,9 @@ services:
     ports:
       - "9082:8082"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      TZ: Asia/Ho_Chi_Minh
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-product:5432/duongtech_product
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
@@ -150,6 +161,9 @@ services:
     ports:
       - "9083:8083"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      TZ: Asia/Ho_Chi_Minh
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-order:5432/duongtech_order
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
@@ -192,6 +206,9 @@ services:
     ports:
       - "9084:8084"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      TZ: Asia/Ho_Chi_Minh
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-payment:5432/duongtech_payment
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
@@ -231,6 +248,9 @@ services:
     ports:
       - "9085:8085"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      TZ: Asia/Ho_Chi_Minh
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-inventory:5432/duongtech_inventory
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
@@ -271,6 +291,9 @@ services:
     ports:
       - "9089:8089"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      - TZ=Asia/Ho_Chi_Minh
       - SPRING_RABBITMQ_HOST=rabbitmq
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
@@ -290,6 +313,9 @@ services:
     ports:
       - "9086:8086"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      TZ: Asia/Ho_Chi_Minh
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-notification:5432/duongtech_notification
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 10112004
@@ -317,6 +343,9 @@ services:
     ports:
       - "9087:8087"
     environment:
+      # Giờ Việt Nam cho Java (LocalDateTime.now()) và cho phiên kết nối PostgreSQL.
+      # Thiếu dòng này thì container chạy theo giờ UTC, thời gian lưu bị chậm 7 tiếng.
+      TZ: Asia/Ho_Chi_Minh
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
